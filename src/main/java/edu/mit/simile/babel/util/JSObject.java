@@ -1,4 +1,4 @@
-package edu.mit.simile.babel;
+package edu.mit.simile.babel.util;
 
 import java.io.IOException;
 import java.util.Collection;
