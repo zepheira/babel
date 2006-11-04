@@ -91,8 +91,8 @@ public class TranslatorServlet extends HttpServlet {
 			return;
 		}
 		
-		BabelConverter reader = Babel.s_converters.get(readerName); 
-		BabelConverter writer = Babel.s_converters.get(writerName); 
+		BabelReader reader = Babel.s_readers.get(readerName); 
+		BabelWriter writer = Babel.s_writers.get(writerName); 
 		if (reader == null) {
 			s_logger.warn("No reader of name " + readerName);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -148,7 +148,7 @@ public class TranslatorServlet extends HttpServlet {
 	}
 	
 	protected void readRequestBody(
-		BabelConverter 		converter,
+		BabelReader 		converter,
 		Sail				sail,
 		Properties			readerProperties,
 		HttpServletRequest	request
@@ -162,7 +162,7 @@ public class TranslatorServlet extends HttpServlet {
 	}
 
 	protected void readFiles(
-		BabelConverter 		converter,
+		BabelReader 		converter,
 		Sail				sail,
 		Properties			readerProperties,
 		HttpServletRequest	request
@@ -189,7 +189,7 @@ public class TranslatorServlet extends HttpServlet {
 	}
 	
 	protected void readURLs(
-		BabelConverter 		converter,
+		BabelReader 		converter,
 		Sail				sail,
 		Properties			readerProperties,
 		List<String>		urls
@@ -216,7 +216,7 @@ public class TranslatorServlet extends HttpServlet {
 	}
 
 	protected void writeResult(
-		BabelConverter 		writer, 
+		BabelWriter 		writer, 
 		Sail 				sail, 
 		Properties 			writerProperties,
 		HttpServletResponse response

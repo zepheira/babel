@@ -16,44 +16,45 @@ import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 import org.openrdf.util.iterator.CloseableIterator;
 
-import edu.mit.simile.babel.BabelConverter;
+import edu.mit.simile.babel.BabelReader;
+import edu.mit.simile.babel.BabelWriter;
 import edu.mit.simile.babel.format.N3Format;
 import edu.mit.simile.babel.format.SerializationFormat;
 import edu.mit.simile.babel.type.GenericType;
 import edu.mit.simile.babel.type.SemanticType;
 
-public class N3Converter implements BabelConverter {
+public class N3Converter implements BabelReader, BabelWriter {
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#getLabel(java.util.Locale)
+	 * @see edu.mit.simile.babel.BabelReader#getLabel(java.util.Locale)
 	 */
 	public String getLabel(Locale locale) {
 		return "Serializes generic data to N3";
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#getDescription(java.util.Locale)
+	 * @see edu.mit.simile.babel.BabelReader#getDescription(java.util.Locale)
 	 */
 	public String getDescription(Locale locale) {
 		return "Serializes generic data to N3";
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#getSemanticType()
+	 * @see edu.mit.simile.babel.BabelReader#getSemanticType()
 	 */
 	public SemanticType getSemanticType() {
 		return GenericType.s_singleton;
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#getSerializationFormat()
+	 * @see edu.mit.simile.babel.BabelReader#getSerializationFormat()
 	 */
 	public SerializationFormat getSerializationFormat() {
 		return N3Format.s_singleton;
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties)
+	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties)
 	 */
 	public void read(Reader reader, Sail sail, Properties properties)
 			throws Exception {
@@ -104,7 +105,7 @@ public class N3Converter implements BabelConverter {
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelConverter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties)
+	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties)
 	 */
 	public void write(Writer writer, Sail sail, Properties properties)
 			throws Exception {
