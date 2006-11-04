@@ -19,9 +19,9 @@ import org.openrdf.util.iterator.CloseableIterator;
 import edu.mit.simile.babel.BabelReader;
 import edu.mit.simile.babel.BabelWriter;
 import edu.mit.simile.babel.format.RdfXmlFormat;
-import edu.mit.simile.babel.format.SerializationFormat;
-import edu.mit.simile.babel.type.GenericType;
-import edu.mit.simile.babel.type.SemanticType;
+import edu.mit.simile.babel.SerializationFormat;
+import edu.mit.simile.babel.GenericType;
+import edu.mit.simile.babel.SemanticType;
 
 public class RdfXmlConverter implements BabelReader, BabelWriter {
 

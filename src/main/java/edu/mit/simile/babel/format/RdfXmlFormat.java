@@ -2,6 +2,8 @@ package edu.mit.simile.babel.format;
 
 import java.util.Locale;
 
+import edu.mit.simile.babel.SerializationFormat;
+
 /**
  * @author dfhuynh
  *

@@ -30,7 +30,7 @@ import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.Part;
 
-import edu.mit.simile.babel.type.SemanticType;
+import edu.mit.simile.babel.SemanticType;
 
 public class TranslatorServlet extends HttpServlet {
 	final static private long serialVersionUID = 2083937775584527297L;
