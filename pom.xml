@@ -35,8 +35,8 @@
 	  <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>    
 	  <plugin>
@@ -114,6 +114,12 @@
 
   <dependencies>
   
+	<dependency>
+		<groupId>servlets.com</groupId>
+		<artifactId>cos</artifactId>
+		<version>05Nov2002</version>
+	</dependency>
+	
 	<dependency>
 		<groupId>edu.mit.simile</groupId>
 		<artifactId>babel-interfaces</artifactId>
