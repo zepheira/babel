@@ -125,24 +125,6 @@ public class TranslatorServlet extends HttpServlet {
 			reader.read(request.getReader(), store, readerProperties);
 			writer.write(bufferedWriter, store, writerProperties);
 			
-			/*
-			RDFXMLWriter rdfWriter = new RDFXMLWriter(writer);
-			
-			rdfWriter.startRDF();
-			CloseableIterator<? extends Namespace> n = store.getConnection().getNamespaces();
-			while (n.hasNext()) {
-				Namespace ns = n.next();
-				rdfWriter.handleNamespace(ns.getPrefix(), ns.getName());
-			}
-			
-			CloseableIterator<? extends Statement> i = 
-				store.getConnection().getStatements(null, null, null, false);
-			while (i.hasNext()) {
-				rdfWriter.handleStatement(i.next()); 
-			}
-			rdfWriter.endRDF();
-			*/
-			
 			bufferedWriter.close();
 		} store.shutDown();
 		
