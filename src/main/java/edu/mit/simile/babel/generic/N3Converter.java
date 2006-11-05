@@ -115,17 +115,25 @@ public class N3Converter implements BabelReader, BabelWriter {
 		N3Writer n3Writer = new N3Writer(writer);
 		
 		n3Writer.startRDF();
-		CloseableIterator<? extends Namespace> n = sail.getConnection().getNamespaces();
-		while (n.hasNext()) {
-			Namespace ns = n.next();
-			n3Writer.handleNamespace(ns.getPrefix(), ns.getName());
-		}
-		
-		CloseableIterator<? extends Statement> i = 
-			sail.getConnection().getStatements(null, null, null, false);
-		while (i.hasNext()) {
-			n3Writer.handleStatement(i.next()); 
-		}
+			CloseableIterator<? extends Namespace> n = sail.getConnection().getNamespaces();
+			try {
+				while (n.hasNext()) {
+					Namespace ns = n.next();
+					n3Writer.handleNamespace(ns.getPrefix(), ns.getName());
+				}
+			} finally {
+				n.close();
+			}
+			
+			CloseableIterator<? extends Statement> i = 
+				sail.getConnection().getStatements(null, null, null, false);
+			try {
+				while (i.hasNext()) {
+					n3Writer.handleStatement(i.next()); 
+				}
+			} finally {
+				i.close();
+			}
 		n3Writer.endRDF();
 		
 		connection.commit();

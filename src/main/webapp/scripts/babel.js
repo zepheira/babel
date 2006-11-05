@@ -313,6 +313,8 @@ function configureConvertForms() {
     var noConversionMessage = document.getElementById("no-conversion-message");
     var severalSemanticsMessage = document.getElementById("several-semantics-message");
     var convertFormsDiv = document.getElementById("convert-forms");
+    var form = document.getElementById("semantic-types-form");
+    form.innerHTML = "";
     
     var fromFormatName = getRadioValue("from-format");
     var toFormatName = getRadioValue("to-format");
@@ -325,6 +327,7 @@ function configureConvertForms() {
     }
     
     var conversionSemanticTypes = getConversionSemanticTypes(fromFormatName, toFormatName);
+    
     if (conversionSemanticTypes.length == 0) {
         noConversionMessage.style.display = "block";
         severalSemanticsMessage.style.display = "none";
@@ -337,6 +340,19 @@ function configureConvertForms() {
         noConversionMessage.style.display = "none";
         severalSemanticsMessage.style.display = "block";
         convertFormsDiv.style.display = "block";
+        
+        for (var i = 0; i < conversionSemanticTypes.length; i++) {
+            var conversion = conversionSemanticTypes[i];
+            var semanticType = Config.semanticTypes[conversion.semanticType];
+            
+            var div = document.createElement("div");
+            div.title = semanticType.description;
+            div.innerHTML = "<input type='radio' name='semantic-type' value='" + 
+                conversion.semanticType + "' >" + semanticType.label + "</input>";
+            div.firstChild.checked = (i == 0);
+                
+            form.appendChild(div);
+        }
     }
 }
 
@@ -353,8 +369,19 @@ function pickReaderWriter(fromFormatName, toFormatName) {
         var conversionSemanticTypes = getConversionSemanticTypes(fromFormatName, toFormatName);
         if (conversionSemanticTypes.length == 1) {
             var conversion = conversionSemanticTypes[0];
-            result.reader = conversion.readers[0], 
-            result.writer = conversion.writers[0] 
+            result.reader = conversion.readers[0];
+            result.writer = conversion.writers[0];
+        } else if (conversionSemanticTypes.length > 1) {
+            var semanticType = getRadioValue("semantic-type");
+            
+            for (var i = 0; i < conversionSemanticTypes.length; i++) {
+                var conversion = conversionSemanticTypes[i];
+                if (conversion.semanticType == semanticType) {
+                    result.reader = conversion.readers[0]; 
+                    result.writer = conversion.writers[0];
+                    break;
+                }
+            }
         }
     }
     return result;
@@ -366,14 +393,23 @@ function getConversionSemanticTypes(fromFormatName, toFormatName) {
     for (var i = 0; i < Config.readers.length; i++) {
         var reader = Config.readers[i];
         if (reader.format == fromFormatName) {
-            var record;
-            if (reader.semanticType in semanticTypeMap) {
-                record = semanticTypeMap[reader.semanticType];
-            } else {
-                record = { readers: [], writers: [] };
-                semanticTypeMap[reader.semanticType] = record;
+            var semanticType = Config.semanticTypes[reader.semanticType];
+            while (semanticType != null) {
+                var record;
+                if (semanticType.name in semanticTypeMap) {
+                    record = semanticTypeMap[semanticType.name];
+                } else {
+                    record = { 
+                        semanticType: semanticType.name, 
+                        readers: [], 
+                        writers: [] 
+                    };
+                    semanticTypeMap[semanticType.name] = record;
+                }
+                record.readers.push(reader);
+                
+                semanticType = Config.semanticTypes[semanticType.supertype];
             }
-            record.readers.push(reader);
         }
     }
     
@@ -382,16 +418,8 @@ function getConversionSemanticTypes(fromFormatName, toFormatName) {
         
         for (var i = 0; i < Config.writers.length; i++) {
             var writer = Config.writers[i];
-            if (writer.format == toFormatName) {
-                var semanticType = Config.semanticTypes[semanticTypeName];
-                
-                while (semanticType != null) {
-                    if (semanticType.name == writer.semanticType) {
-                        record.writers.push(writer);
-                        break;
-                    }
-                    semanticType = Config.semanticTypes[semanticType.supertype];
-                }
+            if (writer.format == toFormatName && writer.semanticType == semanticTypeName) {
+                record.writers.push(writer);
             }
         }
     }

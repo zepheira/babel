@@ -115,17 +115,25 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 		RDFXMLWriter rdfWriter = new RDFXMLWriter(writer);
 		
 		rdfWriter.startRDF();
-		CloseableIterator<? extends Namespace> n = sail.getConnection().getNamespaces();
-		while (n.hasNext()) {
-			Namespace ns = n.next();
-			rdfWriter.handleNamespace(ns.getPrefix(), ns.getName());
-		}
-		
-		CloseableIterator<? extends Statement> i = 
-			sail.getConnection().getStatements(null, null, null, false);
-		while (i.hasNext()) {
-			rdfWriter.handleStatement(i.next()); 
-		}
+			CloseableIterator<? extends Namespace> n = sail.getConnection().getNamespaces();
+			try {
+				while (n.hasNext()) {
+					Namespace ns = n.next();
+					rdfWriter.handleNamespace(ns.getPrefix(), ns.getName());
+				}
+			} finally {
+				n.close();
+			}
+			
+			CloseableIterator<? extends Statement> i = 
+				sail.getConnection().getStatements(null, null, null, false);
+			try {
+				while (i.hasNext()) {
+					rdfWriter.handleStatement(i.next()); 
+				}
+			} finally {
+				i.close();
+			}
 		rdfWriter.endRDF();
 		
 		connection.commit();

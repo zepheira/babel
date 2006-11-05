@@ -37,5 +37,7 @@ public class Babel {
 		addWriter("n3", "edu.mit.simile.babel.generic.N3Converter");
 		
 		addReader("bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
+		addWriter("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
+		addWriter("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
 	}
 }

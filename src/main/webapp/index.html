@@ -82,7 +82,8 @@
                     <p id="several-semantics-message" style="display: none;">
                         There are several semantics through which we can convert between
                         the from format and the to format you have selected. Some semantics
-                        can cause more lossy conversions than others.
+                        can cause more lossy conversions than others. Pick the semantics
+                        you want:
                         <form id="semantic-types-form">
                         </form>
                     </p>
@@ -109,6 +110,7 @@
                             <div class="convert-form-body">
                                 <div><input type="file" name="file-input" size="50" /></div>
                                 <div><button id="add-another-file-button">Add Another File</button></div>
+                                <div>Note: We do not store your data on our server.</div>
                             </div>
                             <div class="convert-form-footer">
                                 <input type="submit" value="Upload and Convert" id="submit-files-button" />
@@ -122,6 +124,7 @@
                                 <div>Enter one or more URLs where the data can be found:</div>
                                 <div><input type="text" name="url-input" size="63" /></div>
                                 <div><button id="add-another-url-button">Add Another URL</button></div>
+                                <div>Note: We cannot access any site that requires you to log in.</div>
                             </div>
                             <div class="convert-form-footer">
                                 <input type="submit" value="Retrieve and Convert" id="submit-urls-button" />
