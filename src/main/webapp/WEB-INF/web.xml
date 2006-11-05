@@ -11,10 +11,19 @@
         <servlet-class>edu.mit.simile.babel.TranslatorServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>Config</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ConfigServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Translator</servlet-name>
         <url-pattern>/translator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Config</servlet-name>
+        <url-pattern>/config</url-pattern>
     </servlet-mapping>
 
 </web-app>

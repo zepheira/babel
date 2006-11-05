@@ -44,6 +44,7 @@ public class TranslatorServlet extends HttpServlet {
 		Properties 		writerProperties = new Properties();
 		String			readerName = null;
 		String			writerName = null;
+		String			mimetype = null;
 		List<String>	urls = new ArrayList<String>();
 		boolean			bodyIsFile = false;
 		
@@ -72,6 +73,8 @@ public class TranslatorServlet extends HttpServlet {
 					readerName = value;
 				} else if (name.equals("writer")) {
 					writerName = value;
+				} else if (name.equals("mimetype")) {
+					mimetype = value;
 				} else if (name.equals("body") && value.equals("file")) {
 					bodyIsFile = true;
 				}
@@ -130,7 +133,7 @@ public class TranslatorServlet extends HttpServlet {
 					readRequestBody(reader, store, readerProperties, request);
 				}
 				
-				writeResult(writer, store, writerProperties, response);
+				writeResult(writer, store, writerProperties, response, mimetype);
 			} catch (BabelException e) {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} finally {
@@ -219,10 +222,15 @@ public class TranslatorServlet extends HttpServlet {
 		BabelWriter 		writer, 
 		Sail 				sail, 
 		Properties 			writerProperties,
-		HttpServletResponse response
+		HttpServletResponse response,
+		String				mimetype
 	) throws BabelException {
 		response.setCharacterEncoding("UTF-8");
-		response.setContentType(writer.getSerializationFormat().getMimetype());
+		response.setContentType(
+			(mimetype == null || mimetype.equals("default")) ? 
+					writer.getSerializationFormat().getMimetype() :
+					mimetype
+		);
 		
 		try {
 			Writer bufferedWriter = new BufferedWriter(
