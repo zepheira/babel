@@ -49,7 +49,7 @@
         <version>6.0.1</version>
         <configuration>
           <connectors>
-            <connector implementation="org.mortbay.jetty.nio.BlockingChannelConnector">
+            <connector implementation="org.mortbay.jetty.bio.SocketConnector">
               <port>7777</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>

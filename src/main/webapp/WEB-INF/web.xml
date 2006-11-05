@@ -14,7 +14,7 @@
 
     <servlet-mapping>
         <servlet-name>Translator</servlet-name>
-        <url-pattern>/translator/*</url-pattern>
+        <url-pattern>/translator</url-pattern>
     </servlet-mapping>
 
 </web-app>
