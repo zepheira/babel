@@ -420,8 +420,11 @@ function getConversionSemanticTypes(fromFormatName, toFormatName) {
      */
     if (true) {
         for (semanticTypeName in semanticTypeMap) {
-            var semanticType = Config.semanticTypes[semanticTypeName];
-            delete semanticTypeMap[semanticType.supertype];
+            var record = semanticTypeMap[semanticTypeName];
+            if (record.writers.length > 0) {
+                var semanticType = Config.semanticTypes[semanticTypeName];
+                delete semanticTypeMap[semanticType.supertype];
+            }
         }
     }
     
