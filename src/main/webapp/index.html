@@ -105,10 +105,10 @@
                         </form>
                         
                         <form id="files-convert-form" class="convert-form" style=""
-                            action="./translator?reader=bibtex&writer=n3" target="new" method="post" enctype="multipart/form-data">
+                            target="new" method="post" enctype="multipart/form-data">
                             <div class="convert-form-header"><span>convert files</span></div>
                             <div class="convert-form-body">
-                                <div><input type="file" name="file-input" size="50" /></div>
+                                <div><input type="file" name="file" size="50" /></div>
                                 <div><button id="add-another-file-button">Add Another File</button></div>
                                 <div>Note: We do not store your data on our server.</div>
                             </div>
@@ -118,11 +118,11 @@
                         </form>
                         
                         <form id="urls-convert-form" class="convert-form" style="display: none"
-                            action="./translator?reader=bibtex&writer=n3" target="new" method="post" enctype="multipart/form-data">
+                            target="new" method="post" enctype="multipart/form-data">
                             <div class="convert-form-header"><span>convert data on some web sites</span></div>
                             <div class="convert-form-body">
                                 <div>Enter one or more URLs where the data can be found:</div>
-                                <div><input type="text" name="url-input" size="63" /></div>
+                                <div><input type="text" name="url" size="63" /></div>
                                 <div><button id="add-another-url-button">Add Another URL</button></div>
                                 <div>Note: We cannot access any site that requires you to log in.</div>
                             </div>
@@ -132,10 +132,10 @@
                         </form>
                         
                         <form id="text-convert-form" class="convert-form" style="display: none"
-                            action="./translator?reader=bibtex&writer=n3" target="new" method="post" enctype="multipart/form-data">
+                            target="new" method="post" enctype="multipart/form-data">
                             <div class="convert-form-header"><span>convert text</span></div>
                             <div class="convert-form-body">
-                                <div><textarea name="text-input" rows="20" cols="48"></textarea></div>
+                                <div><textarea name="raw-text" rows="20" cols="48"></textarea></div>
                             </div>
                             <div class="convert-form-footer">
                                 <input type="submit" value="Upload and Convert" id="submit-text-button" />

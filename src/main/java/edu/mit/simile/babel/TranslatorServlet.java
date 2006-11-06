@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -28,6 +27,7 @@ import org.openrdf.sail.memory.MemoryStore;
 
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
+import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 
 import edu.mit.simile.babel.SemanticType;
@@ -45,8 +45,6 @@ public class TranslatorServlet extends HttpServlet {
 		String			readerName = null;
 		String			writerName = null;
 		String			mimetype = null;
-		List<String>	urls = new ArrayList<String>();
-		boolean			bodyIsFile = false;
 		
 		/*
 		 * Parse parameters
@@ -67,16 +65,12 @@ public class TranslatorServlet extends HttpServlet {
 					readerProperties.setProperty(name.substring(3), value);
 				} else if (name.startsWith("out-")) {
 					writerProperties.setProperty(name.substring(4), value);
-				} else if (name.equals("url")) {
-					urls.add(value);
 				} else if (name.equals("reader")) {
 					readerName = value;
 				} else if (name.equals("writer")) {
 					writerName = value;
 				} else if (name.equals("mimetype")) {
 					mimetype = value;
-				} else if (name.equals("body") && value.equals("file")) {
-					bodyIsFile = true;
 				}
             }
 		}
@@ -127,14 +121,10 @@ public class TranslatorServlet extends HttpServlet {
 		try {
 			store.initialize();
 			try {
-				if (bodyIsFile) {
-					readFiles(reader, store, readerProperties, request);
-				} else {
-					readRequestBody(reader, store, readerProperties, request);
-				}
-				
+				readAndConvert(reader, store, readerProperties, request);
 				writeResult(writer, store, writerProperties, response, mimetype);
 			} catch (BabelException e) {
+				e.printStackTrace();
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} finally {
 				store.shutDown();
@@ -150,21 +140,7 @@ public class TranslatorServlet extends HttpServlet {
 		return (Enumeration<String>) request.getParameterNames();
 	}
 	
-	protected void readRequestBody(
-		BabelReader 		converter,
-		Sail				sail,
-		Properties			readerProperties,
-		HttpServletRequest	request
-	) throws BabelException {
-		try {
-			converter.read(request.getReader(), sail, readerProperties);
-		} catch (Exception e) {
-			s_logger.error(e);
-			throw new BabelException(e);
-		}
-	}
-
-	protected void readFiles(
+	protected void readAndConvert(
 		BabelReader 		converter,
 		Sail				sail,
 		Properties			readerProperties,
@@ -183,6 +159,31 @@ public class TranslatorServlet extends HttpServlet {
 					} finally {
 						reader.close();
 					}
+				} else if (part.isParam()) {
+					ParamPart paramPart = (ParamPart) part;
+					String paramName = paramPart.getName();
+					if (paramName.equals("raw-text")) {
+						StringReader reader = new StringReader(paramPart.getStringValue());
+						try {
+							converter.read(reader, sail, readerProperties);
+						} finally {
+							reader.close();
+						}
+					} else if (paramName.equals("url")) {
+						URLConnection connection = new URL(paramPart.getStringValue()).openConnection();
+						connection.setConnectTimeout(5000);
+						connection.connect();
+						
+						String encoding = connection.getContentEncoding();
+						Reader reader = new InputStreamReader(
+								connection.getInputStream(), 
+								Charset.forName(encoding == null ? "UTF-8" : encoding));
+						try {
+							converter.read(reader, sail, readerProperties);
+						} finally {
+							reader.close();
+						}
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -191,33 +192,6 @@ public class TranslatorServlet extends HttpServlet {
 		}
 	}
 	
-	protected void readURLs(
-		BabelReader 		converter,
-		Sail				sail,
-		Properties			readerProperties,
-		List<String>		urls
-	) throws BabelException {
-		try {
-			Iterator<String> i = urls.iterator();
-			while (i.hasNext()) {
-				URLConnection connection = new URL(i.next()).openConnection();
-				connection.setConnectTimeout(5000);
-				connection.connect();
-				
-				Reader reader = new InputStreamReader(
-					connection.getInputStream(), connection.getContentEncoding());
-				try {
-					converter.read(reader, sail, readerProperties);
-				} finally {
-					reader.close();
-				}
-			}
-		} catch (Exception e) {
-			s_logger.error(e);
-			throw new BabelException(e);
-		}
-	}
-
 	protected void writeResult(
 		BabelWriter 		writer, 
 		Sail 				sail, 

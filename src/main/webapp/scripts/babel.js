@@ -246,7 +246,7 @@ function onAddAnotherFile(evt) {
     }
     
     var div = document.createElement("div");
-    div.innerHTML = '<input type="file" name="file-input" size="50" />';
+    div.innerHTML = '<input type="file" name="file" size="50" />';
     
     var button = document.getElementById("add-another-file-button");
     button.parentNode.parentNode.insertBefore(div, button.parentNode);
@@ -263,7 +263,7 @@ function onAddAnotherURL(evt) {
     }
     
     var div = document.createElement("div");
-    div.innerHTML = '<input type="text" name="url-input" size="63" />';
+    div.innerHTML = '<input type="text" name="url" size="63" />';
     
     var button = document.getElementById("add-another-url-button");
     button.parentNode.parentNode.insertBefore(div, button.parentNode);
@@ -274,11 +274,18 @@ function onAddAnotherURL(evt) {
 }
     
 function onSubmitFiles(evt) {
-    evt = (evt) ? evt : ((event) ? event : null);
-    if (evt == null) {
-        return;
-    }
-    
+    prepareFormForSubmit("files-convert-form");
+}
+
+function onSubmitURLs(evt) {
+    prepareFormForSubmit("urls-convert-form");
+}
+
+function onSubmitText(evt) {
+    prepareFormForSubmit("text-convert-form");
+}
+
+function prepareFormForSubmit(formName) {
     var rw = pickReaderWriter();
     if (rw.reader == null || rw.writer == null) {
         alert("Sorry, we cannot convert between those formats.");
@@ -286,27 +293,11 @@ function onSubmitFiles(evt) {
         return false;
     }
     
-    var form = document.getElementById("files-convert-form");
+    var form = document.getElementById(formName);
     form.action = "translator" +
         "?reader=" + encodeURIComponent(rw.reader.name) + 
         "&writer=" + encodeURIComponent(rw.writer.name) +
         "&mimetype=" + encodeURIComponent(getRadioValue("mimetype-choice"))
-        
-    // let the default handling happen
-}
-
-function onSubmitURLs(evt) {
-    evt = (evt) ? evt : ((event) ? event : null);
-    if (evt == null) {
-        return;
-    }
-}
-
-function onSubmitText(evt) {
-    evt = (evt) ? evt : ((event) ? event : null);
-    if (evt == null) {
-        return;
-    }
 }
 
 function configureConvertForms() {
@@ -424,6 +415,19 @@ function getConversionSemanticTypes(fromFormatName, toFormatName) {
         }
     }
     
+    /*
+     *  Eliminate semantic type for which we have sub semantic type.
+     */
+    if (true) {
+        for (semanticTypeName in semanticTypeMap) {
+            var semanticType = Config.semanticTypes[semanticTypeName];
+            delete semanticTypeMap[semanticType.supertype];
+        }
+    }
+    
+    /*
+     *  Return all conversions that we have some writers for.
+     */
     var results = [];
     for (semanticTypeName in semanticTypeMap) {
         var record = semanticTypeMap[semanticTypeName];
