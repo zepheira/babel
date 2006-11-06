@@ -1,0 +1,9 @@
+<div class="publication">
+    <span control="copy-button" style="float: right" />
+    <div class="title"><span content=".label" /></div>
+    
+    <div class="authors"><span content=".hasAuthor" /></div>
+    <p content=".hasAbstract" />
+    
+    <div control="item-link" />
+</div>

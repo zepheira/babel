@@ -298,7 +298,7 @@ function onSubmitText(evt) {
 }
 
 function prepareFormForSubmit(formName) {
-    var rw = pickReaderWriter();
+    var rw = pickReaderWriter(preview);
     if (rw.reader == null || rw.writer == null) {
         alert("Sorry, we cannot convert between those formats.");
         evt.stopPropagation();
@@ -312,8 +312,8 @@ function prepareFormForSubmit(formName) {
     ];
     var servlet = "translator";
     
-    if ("previewTemplate" in rw.toFormat && preview) {
-        params.push("template=" + encodeURIComponent(rw.toFormat.previewTemplate));
+    if ("previewTemplate" in rw.writer && preview) {
+        params.push("template=" + encodeURIComponent(rw.writer.previewTemplate));
         servlet = "preview";
     }
     
@@ -345,6 +345,18 @@ function configureConvertForms() {
         severalSemanticsMessage.style.display = "none";
         convertFormsDiv.style.display = "none";
     } else {
+        var previewable = function(conversion) {
+            var writers = conversion.writers;
+            var previewable = false;
+            for (var i = 0; i < writers.length; i++) {
+                if ("previewTemplate" in writers[i]) {
+                    previewable = true;
+                    break;
+                }
+            }
+            return previewable;
+        };
+        
         if (conversionSemanticTypes.length == 1) {
             noConversionMessage.style.display = "none";
             severalSemanticsMessage.style.display = "none";
@@ -360,51 +372,68 @@ function configureConvertForms() {
                 
                 var div = document.createElement("div");
                 div.title = semanticType.description;
-                div.innerHTML = "<input type='radio' name='semantic-type' value='" + 
-                    conversion.semanticType + "' >" + semanticType.label + "</input>";
+                div.innerHTML = "<input type='radio'" +
+                    " name='semantic-type'" +
+                    " value='" + conversion.semanticType + "'" +
+                    " onclick='setPreviewable(" + previewable(conversion) + ")'>" + 
+                    semanticType.label + 
+                    "</input>";
                 div.firstChild.checked = (i == 0);
                     
                 semanticTypesForm.appendChild(div);
             }
         }
         
-        var toFormat = Config.formats[toFormatName];
-        var display = ("previewTemplate" in toFormat);
-        var previewButtons = document.getElementsByName("preview-button");
-        for (var i = 0; i < previewButtons.length; i++) {
-            previewButtons[i].style.display = display ? "inline" : "none";
-        }
-        document.getElementById("preview-message").style.display = display ? "block" : "none";
-        
+        setPreviewable(previewable(conversionSemanticTypes[0]));
     }
 }
 
-function pickReaderWriter(fromFormatName, toFormatName) {
+function setPreviewable(previewable) {
+    var previewButtons = document.getElementsByName("preview-button");
+    for (var i = 0; i < previewButtons.length; i++) {
+        previewButtons[i].style.display = previewable ? "inline" : "none";
+    }
+    document.getElementById("preview-message").style.display = previewable ? "block" : "none";
+}
+
+function pickReaderWriter(preview) {
     var fromFormatName = getRadioValue("from-format");
     var toFormatName = getRadioValue("to-format");
     
     var result = { 
         reader:     null, 
-        writer:     null,
-        toFormat:   Config.formats[toFormatName]
+        writer:     null
     };
     
     if (fromFormatName != null && toFormatName != null) {
         var conversionSemanticTypes = getConversionSemanticTypes(fromFormatName, toFormatName);
+        var conversion = null;
         if (conversionSemanticTypes.length == 1) {
-            var conversion = conversionSemanticTypes[0];
+            conversion = conversionSemanticTypes[0];
             result.reader = conversion.readers[0];
             result.writer = conversion.writers[0];
         } else if (conversionSemanticTypes.length > 1) {
             var semanticType = getRadioValue("semantic-type");
             
             for (var i = 0; i < conversionSemanticTypes.length; i++) {
-                var conversion = conversionSemanticTypes[i];
-                if (conversion.semanticType == semanticType) {
-                    result.reader = conversion.readers[0]; 
-                    result.writer = conversion.writers[0];
+                if (conversionSemanticTypes[i].semanticType == semanticType) {
+                    conversion = conversionSemanticTypes[i];
                     break;
                 }
+            }
+        }
+        
+        if (conversion != null) {
+            result.reader = conversion.readers[0]; 
+            if (preview) {
+                for (var i = 0; i < conversion.writers.length; i++) {
+                    if ("previewTemplate" in conversion.writers[i]) {
+                        result.writer = conversion.writers[i];
+                        break;
+                    }
+                }
+            } else {
+                result.writer = conversion.writers[0];
             }
         }
     }

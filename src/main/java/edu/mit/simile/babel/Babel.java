@@ -43,6 +43,7 @@ public class Babel {
 		addWriter("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
 		addWriter("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
 		
-		s_previewTemplates.put("edu.mit.simile.babel.exhibit.ExhibitJsonFormat", "exhibit.vt");
+		s_previewTemplates.put("exhibit-json", "exhibit.vt");
+		s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");
 	}
 }
