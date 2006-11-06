@@ -1,7 +1,9 @@
 package edu.mit.simile.babel;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.Encoder;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -195,10 +198,12 @@ public class TranslatorServlet extends HttpServlet {
 						connection.setConnectTimeout(5000);
 						connection.connect();
 						
+						InputStream inputStream = connection.getInputStream();
 						String encoding = connection.getContentEncoding();
+						
 						Reader reader = new InputStreamReader(
-								connection.getInputStream(), 
-								Charset.forName(encoding == null ? "UTF-8" : encoding));
+							inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
+									
 						try {
 							converter.read(reader, sail, readerProperties);
 						} finally {
