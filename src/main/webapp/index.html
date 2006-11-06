@@ -113,7 +113,8 @@
                                 <div>Note: We do not store your data on our server.</div>
                             </div>
                             <div class="convert-form-footer">
-                                <input type="submit" value="Upload and Convert" id="submit-files-button" />
+                                <input type="submit" value="Upload and Convert" id="submit-files-button" name="convert-button" />
+                                <input type="submit" value="Upload and Preview" id="preview-files-button" name="preview-button" />
                             </div>
                         </form>
                         
@@ -127,7 +128,8 @@
                                 <div>Note: We cannot access any site that requires you to log in.</div>
                             </div>
                             <div class="convert-form-footer">
-                                <input type="submit" value="Retrieve and Convert" id="submit-urls-button" />
+                                <input type="submit" value="Retrieve and Convert" id="submit-urls-button" name="convert-button" />
+                                <input type="submit" value="Preview and Convert" id="preview-urls-button" name="preview-button" />
                             </div>
                         </form>
                         
@@ -138,9 +140,15 @@
                                 <div><textarea name="raw-text" rows="20" cols="48"></textarea></div>
                             </div>
                             <div class="convert-form-footer">
-                                <input type="submit" value="Upload and Convert" id="submit-text-button" />
+                                <input type="submit" value="Upload and Convert" id="submit-text-button" name="convert-button" />
+                                <input type="submit" value="Upload and Preview" id="preview-text-button" name="preview-button" />
                             </div>
                         </form>
+                        
+                        <p id="preview-message" style="display: none">
+                            Note that the results for the selected output format 
+                            can be previewed in a web application.
+                        </p>
                     </div>
                 </td>
             </tr>

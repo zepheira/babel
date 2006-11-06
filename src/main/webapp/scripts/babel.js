@@ -1,3 +1,5 @@
+var preview = false;
+
 function onLoad() {
     /*
      *  Determine from formats and to formats
@@ -67,6 +69,16 @@ function onLoad() {
     document.getElementById("files-convert-form").onsubmit = onSubmitFiles;
     document.getElementById("urls-convert-form").onsubmit = onSubmitURLs;
     document.getElementById("text-convert-form").onsubmit = onSubmitText;
+    
+    var convertButtons = document.getElementsByName("convert-button");
+    for (var i = 0; i < convertButtons.length; i++) {
+        convertButtons[i].onmousedown = function() { preview = false; };
+    }
+    
+    var previewButtons = document.getElementsByName("preview-button");
+    for (var i = 0; i < previewButtons.length; i++) {
+        previewButtons[i].onmousedown = function() { preview = true; };
+    }
 }
 
 function onFromFormatSelect(evt) {
@@ -293,19 +305,28 @@ function prepareFormForSubmit(formName) {
         return false;
     }
     
+    var params = [
+        "reader=" + encodeURIComponent(rw.reader.name),
+        "writer=" + encodeURIComponent(rw.writer.name),
+        "mimetype=" + encodeURIComponent(getRadioValue("mimetype-choice"))
+    ];
+    var servlet = "translator";
+    
+    if ("previewTemplate" in rw.toFormat && preview) {
+        params.push("template=" + encodeURIComponent(rw.toFormat.previewTemplate));
+        servlet = "preview";
+    }
+    
     var form = document.getElementById(formName);
-    form.action = "translator" +
-        "?reader=" + encodeURIComponent(rw.reader.name) + 
-        "&writer=" + encodeURIComponent(rw.writer.name) +
-        "&mimetype=" + encodeURIComponent(getRadioValue("mimetype-choice"))
+    form.action = servlet + "?" + params.join("&");
 }
 
 function configureConvertForms() {
     var noConversionMessage = document.getElementById("no-conversion-message");
     var severalSemanticsMessage = document.getElementById("several-semantics-message");
     var convertFormsDiv = document.getElementById("convert-forms");
-    var form = document.getElementById("semantic-types-form");
-    form.innerHTML = "";
+    var semanticTypesForm = document.getElementById("semantic-types-form");
+    semanticTypesForm.innerHTML = "";
     
     var fromFormatName = getRadioValue("from-format");
     var toFormatName = getRadioValue("to-format");
@@ -323,38 +344,50 @@ function configureConvertForms() {
         noConversionMessage.style.display = "block";
         severalSemanticsMessage.style.display = "none";
         convertFormsDiv.style.display = "none";
-    } else if (conversionSemanticTypes.length == 1) {
-        noConversionMessage.style.display = "none";
-        severalSemanticsMessage.style.display = "none";
-        convertFormsDiv.style.display = "block";
     } else {
-        noConversionMessage.style.display = "none";
-        severalSemanticsMessage.style.display = "block";
-        convertFormsDiv.style.display = "block";
-        
-        for (var i = 0; i < conversionSemanticTypes.length; i++) {
-            var conversion = conversionSemanticTypes[i];
-            var semanticType = Config.semanticTypes[conversion.semanticType];
+        if (conversionSemanticTypes.length == 1) {
+            noConversionMessage.style.display = "none";
+            severalSemanticsMessage.style.display = "none";
+            convertFormsDiv.style.display = "block";
+        } else {
+            noConversionMessage.style.display = "none";
+            severalSemanticsMessage.style.display = "block";
+            convertFormsDiv.style.display = "block";
             
-            var div = document.createElement("div");
-            div.title = semanticType.description;
-            div.innerHTML = "<input type='radio' name='semantic-type' value='" + 
-                conversion.semanticType + "' >" + semanticType.label + "</input>";
-            div.firstChild.checked = (i == 0);
+            for (var i = 0; i < conversionSemanticTypes.length; i++) {
+                var conversion = conversionSemanticTypes[i];
+                var semanticType = Config.semanticTypes[conversion.semanticType];
                 
-            form.appendChild(div);
+                var div = document.createElement("div");
+                div.title = semanticType.description;
+                div.innerHTML = "<input type='radio' name='semantic-type' value='" + 
+                    conversion.semanticType + "' >" + semanticType.label + "</input>";
+                div.firstChild.checked = (i == 0);
+                    
+                semanticTypesForm.appendChild(div);
+            }
         }
+        
+        var toFormat = Config.formats[toFormatName];
+        var display = ("previewTemplate" in toFormat);
+        var previewButtons = document.getElementsByName("preview-button");
+        for (var i = 0; i < previewButtons.length; i++) {
+            previewButtons[i].style.display = display ? "inline" : "none";
+        }
+        document.getElementById("preview-message").style.display = display ? "block" : "none";
+        
     }
 }
 
 function pickReaderWriter(fromFormatName, toFormatName) {
-    var result = { 
-        reader: null, 
-        writer: null 
-    };
-    
     var fromFormatName = getRadioValue("from-format");
     var toFormatName = getRadioValue("to-format");
+    
+    var result = { 
+        reader:     null, 
+        writer:     null,
+        toFormat:   Config.formats[toFormatName]
+    };
     
     if (fromFormatName != null && toFormatName != null) {
         var conversionSemanticTypes = getConversionSemanticTypes(fromFormatName, toFormatName);

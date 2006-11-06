@@ -40,6 +40,27 @@ public class TranslatorServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
+        String[] params = StringUtils.splitPreserveAllTokens(request.getQueryString(), '&');
+		Writer writer = new BufferedWriter(
+			new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
+		try {
+			internalDoPost(request, response, params, writer);
+		} finally {
+			writer.close();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected Enumeration<String> getParameterNames(HttpServletRequest request) {
+		return (Enumeration<String>) request.getParameterNames();
+	}
+	
+	protected boolean internalDoPost(
+		HttpServletRequest 	request, 
+		HttpServletResponse response,
+		String[]			params,
+		Writer				writer
+	) throws ServletException, IOException {
 		Properties 		readerProperties = new Properties();
 		Properties 		writerProperties = new Properties();
 		String			readerName = null;
@@ -49,7 +70,6 @@ public class TranslatorServlet extends HttpServlet {
 		/*
 		 * Parse parameters
 		 */
-        String[] params = StringUtils.splitPreserveAllTokens(request.getQueryString(), '&');
         for (int i = 0; i < params.length; i++) {
             String param = params[i];
             int equalIndex = param.indexOf('=');
@@ -81,37 +101,37 @@ public class TranslatorServlet extends HttpServlet {
 		if (readerName == null) {
 			s_logger.warn("No reader name in request");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return false;
 		} else if (writerName == null) {
 			s_logger.warn("No writer name in request");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return false;
 		}
 		
-		BabelReader reader = Babel.s_readers.get(readerName); 
-		BabelWriter writer = Babel.s_writers.get(writerName); 
-		if (reader == null) {
+		BabelReader babelReader = Babel.s_readers.get(readerName); 
+		BabelWriter babelWriter = Babel.s_writers.get(writerName); 
+		if (babelReader == null) {
 			s_logger.warn("No reader of name " + readerName);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		} else if (writer == null) {
+			return false;
+		} else if (babelWriter == null) {
 			s_logger.warn("No writer of name " + writerName);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return false;
 		}
 		
 		/*
 		 * Check compatibility
 		 */
-		SemanticType readerType = reader.getSemanticType();
-		SemanticType writerType = writer.getSemanticType();
+		SemanticType readerType = babelReader.getSemanticType();
+		SemanticType writerType = babelWriter.getSemanticType();
 		if (!writerType.getClass().isInstance(readerType)) {
 			s_logger.warn(
 				"Writer " + writerType.getClass().getName() + 
 				" cannot take input from reader " + readerType.getClass().getName()
 			);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			return false;
 		}
 		
 		/*
@@ -121,8 +141,13 @@ public class TranslatorServlet extends HttpServlet {
 		try {
 			store.initialize();
 			try {
-				readAndConvert(reader, store, readerProperties, request);
-				writeResult(writer, store, writerProperties, response, mimetype);
+				readAndConvert(babelReader, store, readerProperties, request);
+				
+				setContentEncodingAndMimetype(babelWriter, response, mimetype);
+				
+				writeResult(babelWriter, store, writerProperties, writer);
+				
+				return true;
 			} catch (BabelException e) {
 				e.printStackTrace();
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -133,11 +158,7 @@ public class TranslatorServlet extends HttpServlet {
 			s_logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected Enumeration<String> getParameterNames(HttpServletRequest request) {
-		return (Enumeration<String>) request.getParameterNames();
+		return false;
 	}
 	
 	protected void readAndConvert(
@@ -193,31 +214,27 @@ public class TranslatorServlet extends HttpServlet {
 	}
 	
 	protected void writeResult(
-		BabelWriter 		writer, 
+		BabelWriter 		babelWriter, 
 		Sail 				sail, 
 		Properties 			writerProperties,
-		HttpServletResponse response,
-		String				mimetype
+		Writer				writer
 	) throws BabelException {
+		try {
+			babelWriter.write(writer, sail, writerProperties);
+		} catch (Exception e) {
+			s_logger.error(e);
+			throw new BabelException(e);
+		}
+	}
+	
+	protected void setContentEncodingAndMimetype(
+			BabelWriter writer, HttpServletResponse response, String mimetype) {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType(
 			(mimetype == null || mimetype.equals("default")) ? 
 					writer.getSerializationFormat().getMimetype() :
 					mimetype
 		);
-		
-		try {
-			Writer bufferedWriter = new BufferedWriter(
-					new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
-			try {
-				writer.write(bufferedWriter, sail, writerProperties);
-			} finally {
-				bufferedWriter.close();
-			}
-		} catch (Exception e) {
-			s_logger.error(e);
-			throw new BabelException(e);
-		}
 	}
 	
     private static final String s_urlEncoding = "UTF-8";

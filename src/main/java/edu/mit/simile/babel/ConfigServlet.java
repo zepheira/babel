@@ -72,6 +72,9 @@ public class ConfigServlet extends HttpServlet {
 			formatO.put("name", c.getName());
 			formatO.put("label", format.getLabel(null));
 			formatO.put("description", format.getDescription(null));
+			if (Babel.s_previewTemplates.containsKey(c.getName())) {
+				formatO.put("previewTemplate", Babel.s_previewTemplates.get(c.getName()));
+			}
 			
 			formatsO.put(c.getName(), formatO);
 		}

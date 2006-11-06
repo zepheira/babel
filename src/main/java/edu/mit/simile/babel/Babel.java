@@ -14,6 +14,9 @@ public class Babel {
 	final static public Map<String, BabelWriter> s_writers = 
 		new HashMap<String, BabelWriter>();
 
+	final static public Map<String, String> s_previewTemplates = 
+		new HashMap<String, String>();
+	
 	final static private void addReader(String name, String className) {
 		try {
 			s_readers.put(name, (BabelReader) Class.forName(className).newInstance());
@@ -39,5 +42,7 @@ public class Babel {
 		addReader("bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
 		addWriter("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
 		addWriter("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
+		
+		s_previewTemplates.put("edu.mit.simile.babel.exhibit.ExhibitJsonFormat", "exhibit.vt");
 	}
 }
