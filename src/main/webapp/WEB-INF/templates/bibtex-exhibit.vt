@@ -6,10 +6,16 @@
         <script src="http://dfhuynh.csail.mit.edu:8888/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
         <script src="http://dfhuynh.csail.mit.edu:8888/exhibit/api/exhibit-api.js" type="text/javascript"></script>
         <script type="text/javascript">
-            var data = $data;
             var exhibit;
         
+            function getForm() {
+                return document.getElementById("data-form");
+            }
+            function getTextarea() {
+                return document.getElementById("data-textarea");
+            }
             function onLoad() {
+                var data = eval("(" + getTextarea().value + ")");
                 var configuration = {
                     exporters: {
                         "bibtex": {
@@ -64,12 +70,32 @@
                 exhibit.getBrowseEngine().setRootCollection(
                     exhibit.getDatabase().getSubjectsUnion(types, "type")
                 );
+                
+                document.getElementById("close-button").onclick = function(evt) {
+                    evt = (evt) ? evt : event;
+                    
+                    getForm().style.display = "none";
+                    
+                    evt.stopPropagation();
+                    return false;
+                };
+            }
+            function copyRawData() {
+                getForm().style.display = "block";
+                
+                var textarea = getTextarea();
+                textarea.focus();
+                textarea.select();
+            }
+            function downloadRawData() {
+                getForm().submit();
             }
         </script>
         <style>
             div.publication {
-                padding:    0.5em;
-                border:     1px solid #ccc; 
+                padding:        0.5em;
+                border:         1px solid #ccc; 
+                margin-bottom:  1em;
             }
             div.title {
                 font-weight: bold;  
@@ -83,15 +109,40 @@
                 background:     none;
                 border:         none;
             }
+            #preview-controls {
+                padding:        1em;
+                border:         1px dashed #aaa;
+                margin-bottom:  1em;
+                text-align:     center;
+            }
+            #data-form {
+                display:    none;
+                position:   absolute;
+                top:        10em;
+                left:       15%;
+                width:      70%;
+                z-index:    1000;
+                padding:    2em;
+                border:     2px solid #888;
+                background: #FFFFE0;
+            }
+            #data-form textarea {
+                width:      100%;
+            }
         </style>
     </head>
     <body onload="onLoad();">
         <ul id="path">
             <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
+            <li><a href="http://simile.mit.edu/babel/" title="Babel">Babel</a></li>
             <li><span>Preview of Bibtex Data in Exhibit</span></li>
         </ul>
         <div id="body">
             <h1>Bibtex Preview in Exhibit</h1>
+            <div id="preview-controls">
+                <button onclick="copyRawData();">Copy Raw Data</button>
+                <button onclick="downloadRawData();">Download Raw Data</button>
+            </div>
             <table width="100%">
                 <tr valign="top">
                     <td>
@@ -104,5 +155,10 @@
                 </tr>
             </table>
         </div>
+        <form id="data-form" action="reflector?mimetype=text/plain" method="post" target="_blank" enctype="multipart/form-data">
+            <p>Copy the raw data:</p>
+            <textarea rows="15" id="data-textarea" name="content">$utilities.escapeHtml($data)</textarea>
+            <p style="text-align: center;"><button id="close-button">Close</button></p>
+        </form>
     </body>
 </html>

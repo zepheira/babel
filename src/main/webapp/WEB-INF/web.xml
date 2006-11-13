@@ -21,6 +21,11 @@
         <servlet-class>edu.mit.simile.babel.PreviewServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>Reflector</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ReflectorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Translator</servlet-name>
@@ -33,6 +38,10 @@
     <servlet-mapping>
         <servlet-name>Preview</servlet-name>
         <url-pattern>/preview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Reflector</servlet-name>
+        <url-pattern>/reflector</url-pattern>
     </servlet-mapping>
 
 </web-app>

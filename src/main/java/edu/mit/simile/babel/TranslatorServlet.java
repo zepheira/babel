@@ -1,6 +1,5 @@
 package edu.mit.simile.babel;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +10,6 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -20,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.Encoder;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,6 +31,10 @@ import com.oreilly.servlet.multipart.Part;
 
 import edu.mit.simile.babel.SemanticType;
 
+/**
+ * @author dfhuynh
+ *
+ */
 public class TranslatorServlet extends HttpServlet {
 	final static private long serialVersionUID = 2083937775584527297L;
 	final static private Logger s_logger = Logger.getLogger(TranslatorServlet.class);
@@ -51,11 +51,6 @@ public class TranslatorServlet extends HttpServlet {
 		} finally {
 			writer.close();
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected Enumeration<String> getParameterNames(HttpServletRequest request) {
-		return (Enumeration<String>) request.getParameterNames();
 	}
 	
 	protected boolean internalDoPost(
@@ -194,20 +189,29 @@ public class TranslatorServlet extends HttpServlet {
 							reader.close();
 						}
 					} else if (paramName.equals("url")) {
-						URLConnection connection = new URL(paramPart.getStringValue()).openConnection();
-						connection.setConnectTimeout(5000);
-						connection.connect();
-						
-						InputStream inputStream = connection.getInputStream();
-						String encoding = connection.getContentEncoding();
-						
-						Reader reader = new InputStreamReader(
-							inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
-									
-						try {
-							converter.read(reader, sail, readerProperties);
-						} finally {
-							reader.close();
+						String url = paramPart.getStringValue();
+						if (url.length() > 0) {
+							URLConnection connection = null; 
+							try {
+								connection = new URL(url).openConnection();
+								connection.setConnectTimeout(5000);
+								connection.connect();
+							} catch (Exception e) {
+								s_logger.error(e);
+								continue;
+							}
+							
+							InputStream inputStream = connection.getInputStream();
+							String encoding = connection.getContentEncoding();
+							
+							Reader reader = new InputStreamReader(
+								inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
+										
+							try {
+								converter.read(reader, sail, readerProperties);
+							} finally {
+								reader.close();
+							}
 						}
 					}
 				}

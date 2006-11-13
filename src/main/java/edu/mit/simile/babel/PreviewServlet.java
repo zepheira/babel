@@ -14,6 +14,10 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
+/**
+ * @author dfhuynh
+ *
+ */
 public class PreviewServlet extends TranslatorServlet {
 	private static final long serialVersionUID = -2862110707968976815L;
 
@@ -31,7 +35,7 @@ public class PreviewServlet extends TranslatorServlet {
             Properties velocityProperties = new Properties();
             velocityProperties.setProperty(
                     RuntimeConstants.FILE_RESOURCE_LOADER_PATH, 
-                    new File(webapp.getParentFile(), "templates").getAbsolutePath());
+                    new File(new File(webapp, "WEB-INF"), "templates").getAbsolutePath());
     		
             m_ve = new VelocityEngine();
 			m_ve.init(velocityProperties);
@@ -66,6 +70,7 @@ public class PreviewServlet extends TranslatorServlet {
 	            internalDoPost(request, response, params, writer);
 	            
 	            vcContext.put("data", writer.toString());
+	            vcContext.put("utilities", new PreviewUtilities());
 	            
 	            writer.close();
             }

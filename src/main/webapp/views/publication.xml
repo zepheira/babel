@@ -4,6 +4,4 @@
     
     <div class="authors"><span content=".hasAuthor" /></div>
     <p content=".hasAbstract" />
-    
-    <div control="item-link" />
 </div>
