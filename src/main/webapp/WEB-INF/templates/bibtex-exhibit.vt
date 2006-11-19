@@ -3,11 +3,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
         <title>Simile | Babel | Bibtex Preview in Exhibit</title>
-        <script src="http://dfhuynh.csail.mit.edu:8888/ajax/api/simile-ajax-api.js" type="text/javascript"></script>
-        <script src="http://dfhuynh.csail.mit.edu:8888/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+        <script src="http://simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
         <script type="text/javascript">
-            var exhibit;
-        
             function getForm() {
                 return document.getElementById("data-form");
             }
@@ -16,51 +13,8 @@
             }
             function onLoad() {
                 var data = eval("(" + getTextarea().value + ")");
-                var configuration = {
-                    exporters: {
-                        "bibtex": {
-                            exporter:   Exhibit.BibtexExporter
-                        }
-                    },
-                    BrowseEngine: {
-                        facets: [
-                            ".type",
-                            ".hasAuthor",
-                            ".hasYear"
-                        ]
-                    },
-                    ItemView: {
-                        viewSelector: function(itemID, exhibit) { return "views/publication.xml"; }
-                    },
-                    ViewPanel: {
-                        views: [
-                            {   constructor: Exhibit.TileView,
-                                label: "Details",
-                                configuration: {
-                                    orders: [
-                                        ".type"
-                                    ],
-                                    possibleOrders: [
-                                        ".type",
-                                        ".hasAuthor",
-                                        ".hasYear",
-                                        ".label"
-                                    ]
-                                }
-                            }
-                        ],
-                        initialView: 0
-                    }
-                };
-                    
-                exhibit = Exhibit.create(
-                    document.getElementById("control-panel"),
-                    document.getElementById("browse-panel"),
-                    document.getElementById("view-panel"),
-                    configuration
-                );
                 
-                exhibit._loadJSON(data, exhibit.getBaseURL(document.location.href));
+                var exhibit = Exhibit.create(data);
                 
                 var types = new Exhibit.Set();
                 for (t in data.types) {
@@ -146,11 +100,19 @@
             <table width="100%">
                 <tr valign="top">
                     <td>
-                        <div id="control-panel"></div>
-                        <div id="view-panel"></div>
+                        <div id="exhibit-control-panel" ex:exporters="Exhibit.BibtexExporter"></div>
+                        <div id="exhibit-view-panel">
+                            <div ex:role="exhibit-lens" ex:templateFile="views/publication.xml"></div>
+                            <div ex:role="exhibit-view"
+                                ex:viewClass="Exhibit.TileView"
+                                ex:label="Details"
+                                ex:orders=".type"
+                                ex:possibleOrders=".type, .hasAuthor, .hasYear, .label"></div>
+                        </div>
                     </td>
                     <td width="30%">
-                        <div id="browse-panel"></div>
+                        <div id="exhibit-browse-panel"
+                            ex:facets=".type, .hasAuthor, .hasYear"></div>
                     </td>
                 </tr>
             </table>

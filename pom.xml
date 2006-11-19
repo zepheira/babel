@@ -135,6 +135,11 @@
 		<artifactId>exhibit-converter</artifactId>
 		<version>1.0.0</version>
 	</dependency>
+	<dependency>
+		<groupId>edu.mit.simile</groupId>
+		<artifactId>tsv-converter</artifactId>
+		<version>1.0.0</version>
+	</dependency>
 	
 	<dependency>
 		<groupId>org.openrdf</groupId>

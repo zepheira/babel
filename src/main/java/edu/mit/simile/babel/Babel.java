@@ -42,6 +42,7 @@ public class Babel {
 		addReader("bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
 		addWriter("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
 		addWriter("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
+		addReader("tsv", "edu.mit.simile.babel.tsv.TSVReader");
 		
 		s_previewTemplates.put("exhibit-json", "exhibit.vt");
 		s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");

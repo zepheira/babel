@@ -1,7 +1,7 @@
-<div class="publication">
-    <span control="copy-button" style="float: right" />
-    <div class="title"><span content=".label" /></div>
+<div class="publication" xmlns:ex="http://simile.mit.edu/2006/11/exhibit#">
+    <span ex:control="copy-button" style="float: right" />
+    <div class="title"><span ex:content=".label" /></div>
     
-    <div class="authors"><span content=".hasAuthor" /></div>
-    <p content=".hasAbstract" />
+    <div class="authors"><span ex:content=".hasAuthor" /></div>
+    <p ex:content=".hasAbstract" />
 </div>

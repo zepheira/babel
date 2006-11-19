@@ -174,6 +174,7 @@ public class TranslatorServlet extends HttpServlet {
 					FilePart filePart = (FilePart) part;
 					Reader reader = new InputStreamReader(filePart.getInputStream());
 					try {
+						readerProperties.setProperty("namespace", generateNamespace(request));
 						converter.read(reader, sail, readerProperties);
 					} finally {
 						reader.close();
@@ -184,6 +185,7 @@ public class TranslatorServlet extends HttpServlet {
 					if (paramName.equals("raw-text")) {
 						StringReader reader = new StringReader(paramPart.getStringValue());
 						try {
+							readerProperties.setProperty("namespace", generateNamespace(request));
 							converter.read(reader, sail, readerProperties);
 						} finally {
 							reader.close();
@@ -208,6 +210,7 @@ public class TranslatorServlet extends HttpServlet {
 								inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
 										
 							try {
+								readerProperties.setProperty("namespace", makeIntoNamespace(url));
 								converter.read(reader, sail, readerProperties);
 							} finally {
 								reader.close();
@@ -255,5 +258,19 @@ public class TranslatorServlet extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException("Exception decoding " + s + " with " + s_urlEncoding + " encoding.");
         }
+    }
+    
+    static protected String generateNamespace(HttpServletRequest request) {
+    	return makeIntoNamespace("http://" + request.getRemoteAddr() + "/");
+    }
+    
+    static protected String makeIntoNamespace(String s) {
+    	if (s.endsWith("#")) {
+    		return s;
+    	} else if (s.endsWith("/")) {
+    		return s;
+    	} else {
+    		return s + "#";
+    	}
     }
 }
