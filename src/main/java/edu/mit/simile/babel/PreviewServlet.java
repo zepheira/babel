@@ -84,5 +84,6 @@ public class PreviewServlet extends TranslatorServlet {
 	@Override
 	protected void setContentEncodingAndMimetype(BabelWriter writer, HttpServletResponse response, String mimetype) {
 		// do nothing
+		response.setContentType("text/html");
 	}
 }

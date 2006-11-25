@@ -136,6 +136,7 @@ public class ValidatorServlet extends HttpServlet {
                 VelocityContext vcContext = new VelocityContext();
    	            vcContext.put("hasCode", new Boolean(false));
    	            
+   	            response.setContentType("text/html");
 	            m_ve.mergeTemplate("validator.vt", vcContext, response.getWriter());
 	        } catch (Throwable t) {
 	        	throw new ServletException(t);

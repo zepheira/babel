@@ -41,6 +41,9 @@
         <div id="error-message">Error: $message (line $line)</div>
         <pre>$preceedingLines$prefix<span class="highlight">$highlight</span>$suffix
 $succeedingLines</pre>
+        <p><b>NOTES</b>: We are not able to pinpoint the error precisely. 
+            Please also check the previous and next lines.
+        </p>
     #else
         <div id="no-error-message">Your code has no syntax error.</div>
         <p id="no-error-explanation">If you're led to this page because 
