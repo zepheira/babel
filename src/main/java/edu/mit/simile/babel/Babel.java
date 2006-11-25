@@ -3,6 +3,7 @@ package edu.mit.simile.babel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.log4j.Logger;
 
 public class Babel {
@@ -47,4 +48,15 @@ public class Babel {
 		s_previewTemplates.put("exhibit-json", "exhibit.vt");
 		s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");
 	}
+	
+    final static String s_urlEncoding = "UTF-8";
+    final static URLCodec s_codec = new URLCodec();
+    
+    final static String decode(String s) {
+        try {
+            return s_codec.decode(s, s_urlEncoding);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception decoding " + s + " with " + s_urlEncoding + " encoding.");
+        }
+    }
 }

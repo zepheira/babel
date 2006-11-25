@@ -57,7 +57,7 @@ public class PreviewServlet extends TranslatorServlet {
                 if (equalIndex >= 0) {
                     String name = param.substring(0, equalIndex);
                     if ("template".equals(name)) {
-                    	template = decode(param.substring(equalIndex + 1));
+                    	template = Babel.decode(param.substring(equalIndex + 1));
                     	break;
                     }
                 }

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.StringUtils;
 
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -44,8 +43,8 @@ public class ReflectorServlet extends HttpServlet {
                 String rawName = param.substring(0, equalIndex);
                 String rawValue = param.substring(equalIndex + 1);
 
-                String name = decode(rawName);
-                String value = decode(rawValue);
+                String name = Babel.decode(rawName);
+                String value = Babel.decode(rawValue);
 
 				if (name.equals("mimetype")) {
 					mimetype = value;
@@ -75,15 +74,4 @@ public class ReflectorServlet extends HttpServlet {
 			writer.close();
 		}
 	}
-	
-    private static final String s_urlEncoding = "UTF-8";
-    private static final URLCodec s_codec = new URLCodec();
-    
-    static public String decode(String s) {
-        try {
-            return s_codec.decode(s, s_urlEncoding);
-        } catch (Exception e) {
-            throw new RuntimeException("Exception decoding " + s + " with " + s_urlEncoding + " encoding.");
-        }
-    }
 }
