@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -135,14 +136,15 @@ public class TranslatorServlet extends HttpServlet {
 		 * Read in data, convert, and write result out
 		 */
 		MemoryStore store = new MemoryStore();
+		Locale locale = request.getLocale();
 		try {
 			store.initialize();
 			try {
-				readAndConvert(babelReader, store, readerProperties, request);
+				readAndConvert(babelReader, store, readerProperties, request, locale);
 				
 				setContentEncodingAndMimetype(babelWriter, response, mimetype);
 				
-				writeResult(babelWriter, store, writerProperties, writer);
+				writeResult(babelWriter, store, writerProperties, writer, locale);
 				
 				return true;
 			} catch (BabelException e) {
@@ -162,7 +164,8 @@ public class TranslatorServlet extends HttpServlet {
 		BabelReader 		converter,
 		Sail				sail,
 		Properties			readerProperties,
-		HttpServletRequest	request
+		HttpServletRequest	request,
+		Locale				locale
 	) throws BabelException {
 		try {
 			MultipartParser parser = new MultipartParser(request, 5 * 1024 * 1024);
@@ -174,7 +177,7 @@ public class TranslatorServlet extends HttpServlet {
 					Reader reader = new InputStreamReader(filePart.getInputStream());
 					try {
 						readerProperties.setProperty("namespace", generateNamespace(request));
-						converter.read(reader, sail, readerProperties);
+						converter.read(reader, sail, readerProperties, locale);
 					} finally {
 						reader.close();
 					}
@@ -185,7 +188,7 @@ public class TranslatorServlet extends HttpServlet {
 						StringReader reader = new StringReader(paramPart.getStringValue());
 						try {
 							readerProperties.setProperty("namespace", generateNamespace(request));
-							converter.read(reader, sail, readerProperties);
+							converter.read(reader, sail, readerProperties, locale);
 						} finally {
 							reader.close();
 						}
@@ -210,7 +213,7 @@ public class TranslatorServlet extends HttpServlet {
 										
 							try {
 								readerProperties.setProperty("namespace", makeIntoNamespace(url));
-								converter.read(reader, sail, readerProperties);
+								converter.read(reader, sail, readerProperties, locale);
 							} finally {
 								reader.close();
 							}
@@ -228,10 +231,11 @@ public class TranslatorServlet extends HttpServlet {
 		BabelWriter 		babelWriter, 
 		Sail 				sail, 
 		Properties 			writerProperties,
-		Writer				writer
+		Writer				writer,
+		Locale				locale
 	) throws BabelException {
 		try {
-			babelWriter.write(writer, sail, writerProperties);
+			babelWriter.write(writer, sail, writerProperties, locale);
 		} catch (Exception e) {
 			s_logger.error(e);
 			throw new BabelException(e);

@@ -62,6 +62,8 @@ public class ValidatorServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
+        response.setContentType("text/html");
+           
 		MultipartParser parser = new MultipartParser(request, 5 * 1024 * 1024);
 		
 		Part part = null;
@@ -78,6 +80,8 @@ public class ValidatorServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+           
 		String url = null;
 		String expression = null;
 		
@@ -136,7 +140,6 @@ public class ValidatorServlet extends HttpServlet {
                 VelocityContext vcContext = new VelocityContext();
    	            vcContext.put("hasCode", new Boolean(false));
    	            
-   	            response.setContentType("text/html");
 	            m_ve.mergeTemplate("validator.vt", vcContext, response.getWriter());
 	        } catch (Throwable t) {
 	        	throw new ServletException(t);

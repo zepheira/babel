@@ -54,9 +54,9 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties)
+	 * @see edu.mit.simile.babel.BabelReader#read(java.io.Reader, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
 	 */
-	public void read(Reader reader, Sail sail, Properties properties)
+	public void read(Reader reader, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 
 		RDFXMLParser parser = new RDFXMLParser();
@@ -105,9 +105,9 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties)
+	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.Writer, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
 	 */
-	public void write(Writer writer, Sail sail, Properties properties)
+	public void write(Writer writer, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 		
 		SailConnection connection = sail.getConnection();

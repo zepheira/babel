@@ -3,7 +3,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
         <title>Simile | Babel | Bibtex Preview in Exhibit</title>
-        <script src="http://simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+        <script src="http://dfhuynh.csail.mit.edu:8888/exhibit/api/exhibit-api.js" type="text/javascript"></script>
         <script type="text/javascript">
             function getForm() {
                 return document.getElementById("data-form");
@@ -14,17 +14,7 @@
             function onLoad() {
                 var data = eval("(" + getTextarea().value + ")");
                 
-                var exhibit = Exhibit.create(data);
-                
-                var types = new Exhibit.Set();
-                for (t in data.types) {
-                    types.add(t);
-                }
-                
-                exhibit.getBrowseEngine().setRootCollection(
-                    exhibit.getDatabase().getSubjectsUnion(types, "type")
-                );
-                
+                var exhibit = Exhibit.create(data, "Publication");
                 document.getElementById("close-button").onclick = function(evt) {
                     evt = (evt) ? evt : event;
                     
@@ -46,16 +36,31 @@
             }
         </script>
         <style>
+            div.title {
+                font-weight: bold;  
+            }
+            
             div.publication {
                 padding:        0.5em;
                 border:         1px solid #ccc; 
                 margin-bottom:  1em;
             }
-            div.title {
-                font-weight: bold;  
-            }
             div.authors {
-                font-style: italic;
+                font-style:     italic;
+            }
+            div.other-properties {
+                font-size:      80%;
+                color:          #888;
+                font-style:     italic;
+                margin-top:     0.5em;
+            }
+            
+            div.author {
+                padding:        0.5em;
+                border:         1px solid #ccc; 
+                margin-bottom:  1em;
+            }
+            ol.publications {
             }
             
             #view-panel h1 {
@@ -102,17 +107,32 @@
                     <td>
                         <div id="exhibit-control-panel" ex:exporters="Exhibit.BibtexExporter"></div>
                         <div id="exhibit-view-panel">
-                            <div ex:role="exhibit-lens" ex:templateFile="views/publication.xml"></div>
+                            <div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication">
+                                <span ex:control="copy-button" style="float: right"></span>
+                                <div class="title"><span ex:content=".label"></span></div>
+                                
+                                <div class="authors"><span ex:content=".author"></span></div>
+                                <p ex:content=".abstract"></p>
+                                <div class="other-properties">Other properties have been converted but not shown in this generic view.</div>
+                            </div>
+                            <div ex:role="exhibit-lens" ex:itemTypes="Author" class="author">
+                                <span ex:control="copy-button" style="float: right"></span>
+                                <div class="title"><span ex:content=".label"></span></div>
+                                
+                                <ol class="publications" ex:content="!author">
+                                    <li ex:content="value"></li>
+                                </ol>
+                            </div>
                             <div ex:role="exhibit-view"
                                 ex:viewClass="Exhibit.TileView"
                                 ex:label="Details"
-                                ex:orders=".type"
-                                ex:possibleOrders=".type, .hasAuthor, .hasYear, .label"></div>
+                                ex:orders=".pub-type"
+                                ex:possibleOrders=".pub-type, .author, .year, .label"></div>
                         </div>
                     </td>
                     <td width="30%">
                         <div id="exhibit-browse-panel"
-                            ex:facets=".type, .hasAuthor, .hasYear"></div>
+                            ex:facets=".pub-type, .author, .year"></div>
                     </td>
                 </tr>
             </table>
