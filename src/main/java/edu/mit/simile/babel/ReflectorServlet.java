@@ -16,6 +16,8 @@ import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 
+import edu.mit.simile.babel.util.Util;
+
 /**
  * @author dfhuynh
  *
@@ -43,8 +45,8 @@ public class ReflectorServlet extends HttpServlet {
                 String rawName = param.substring(0, equalIndex);
                 String rawValue = param.substring(equalIndex + 1);
 
-                String name = Babel.decode(rawName);
-                String value = Babel.decode(rawValue);
+                String name = Util.decode(rawName);
+                String value = Util.decode(rawValue);
 
 				if (name.equals("mimetype")) {
 					mimetype = value;

@@ -14,6 +14,8 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
+import edu.mit.simile.babel.util.Util;
+
 /**
  * @author dfhuynh
  *
@@ -57,7 +59,7 @@ public class PreviewServlet extends TranslatorServlet {
                 if (equalIndex >= 0) {
                     String name = param.substring(0, equalIndex);
                     if ("template".equals(name)) {
-                    	template = Babel.decode(param.substring(equalIndex + 1));
+                    	template = Util.decode(param.substring(equalIndex + 1));
                     	break;
                     }
                 }
