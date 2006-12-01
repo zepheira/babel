@@ -107,8 +107,8 @@ public class TranslatorServlet extends HttpServlet {
 			return false;
 		}
 		
-		BabelReader babelReader = Babel.s_readers.get(readerName); 
-		BabelWriter babelWriter = Babel.s_writers.get(writerName); 
+		BabelReader babelReader = Babel.getReader(readerName); 
+		BabelWriter babelWriter = Babel.getWriter(writerName); 
 		if (babelReader == null) {
 			s_logger.warn("No reader of name " + readerName);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

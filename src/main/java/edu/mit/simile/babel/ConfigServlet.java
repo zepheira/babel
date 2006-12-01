@@ -30,7 +30,7 @@ public class ConfigServlet extends HttpServlet {
 		
 		List<JSObject> readers = new ArrayList<JSObject>();
 		for (String name : Babel.s_readers.keySet()) {
-			BabelReader reader = Babel.s_readers.get(name);
+			BabelReader reader = Babel.getReader(name);
 			JSObject readerO = new JSObject();
 			
 			SerializationFormat format = reader.getSerializationFormat();
@@ -48,7 +48,7 @@ public class ConfigServlet extends HttpServlet {
 
 		List<JSObject> writers = new ArrayList<JSObject>();
 		for (String name : Babel.s_writers.keySet()) {
-			BabelWriter writer = Babel.s_writers.get(name);
+			BabelWriter writer = Babel.getWriter(name);
 			JSObject writerO = new JSObject();
 			
 			SerializationFormat format = writer.getSerializationFormat();

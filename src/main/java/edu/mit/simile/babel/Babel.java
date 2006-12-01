@@ -3,33 +3,21 @@ package edu.mit.simile.babel;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 public class Babel {
-	final static private Logger s_logger = Logger.getLogger(TranslatorServlet.class);
+	final static public Map<String, String> s_readers = 
+		new HashMap<String, String>();
 	
-	final static public Map<String, BabelReader> s_readers = 
-		new HashMap<String, BabelReader>();
-	
-	final static public Map<String, BabelWriter> s_writers = 
-		new HashMap<String, BabelWriter>();
+	final static public Map<String, String> s_writers = 
+		new HashMap<String, String>();
 
 	final static public Map<String, String> s_previewTemplates = 
 		new HashMap<String, String>();
 	
 	final static private void addReader(String name, String className) {
-		try {
-			s_readers.put(name, (BabelReader) Class.forName(className).newInstance());
-		} catch (Exception e) {
-			s_logger.error("Failed to add reader " + name + " of type " + className, e);
-		}
+		s_readers.put(name, className);
 	}
 	final static private void addWriter(String name, String className) {
-		try {
-			s_writers.put(name, (BabelWriter) Class.forName(className).newInstance());
-		} catch (Exception e) {
-			s_logger.error("Failed to add writer " + name + " of type " + className, e);
-		}
+		s_writers.put(name, className);
 	}
 	
 	static {
@@ -46,5 +34,20 @@ public class Babel {
 		
 		s_previewTemplates.put("exhibit-json", "exhibit.vt");
 		s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");
+	}
+	
+	static BabelReader getReader(String name) {
+		try {
+			return (BabelReader) Class.forName(s_readers.get(name)).newInstance();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	static BabelWriter getWriter(String name) {
+		try {
+			return (BabelWriter) Class.forName(s_writers.get(name)).newInstance();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }
