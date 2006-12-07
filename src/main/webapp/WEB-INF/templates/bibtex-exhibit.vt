@@ -139,7 +139,7 @@
         </div>
         <form id="data-form" action="reflector?mimetype=text/plain" method="post" target="_blank" enctype="multipart/form-data">
             <p>Copy the raw data:</p>
-            <textarea rows="15" id="data-textarea" name="content">$utilities.escapeHtml($data)</textarea>
+            <textarea rows="15" wrap="off" id="data-textarea" name="content">$utilities.escapeHtml($data)</textarea>
             <p style="text-align: center;"><button id="close-button">Close</button></p>
         </form>
     </body>
