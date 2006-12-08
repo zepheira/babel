@@ -3,7 +3,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
         <title>Simile | Babel | Bibtex Preview in Exhibit</title>
-        <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+        <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js?bundle=false" type="text/javascript"></script>
         <script type="text/javascript">
             function getForm() {
                 return document.getElementById("data-form");
@@ -40,27 +40,38 @@
                 font-weight: bold;  
             }
             
-            div.publication {
+            div.publication-lens {
                 padding:        0.5em;
                 border:         1px solid #ccc; 
                 margin-bottom:  1em;
             }
-            div.authors {
+            .publication-lens div.authors {
                 font-style:     italic;
             }
-            div.other-properties {
+            .publication-lens div.other-properties {
                 font-size:      80%;
                 color:          #888;
                 font-style:     italic;
                 margin-top:     0.5em;
             }
             
-            div.author {
+            div.author-lens {
                 padding:        0.5em;
                 border:         1px solid #ccc; 
                 margin-bottom:  1em;
             }
-            ol.publications {
+            .author-lens ol.publications li {
+                margin-bottom:  0.5em;
+            }
+            .author-lens .publication-title {
+                font-weight:    bold;
+                color:          #008;
+            }
+            .author-lens span.authors {
+                font-style:     italic;
+            }
+            .author-lens .year {
+                font-style:     italic;
             }
             
             #view-panel h1 {
@@ -107,7 +118,7 @@
                     <td>
                         <div id="exhibit-control-panel" ex:exporters="Exhibit.BibtexExporter"></div>
                         <div id="exhibit-view-panel">
-                            <div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication">
+                            <div ex:role="exhibit-lens" ex:itemTypes="Publication" class="publication-lens">
                                 <span ex:control="copy-button" style="float: right"></span>
                                 <div class="title"><span ex:content=".label"></span></div>
                                 
@@ -115,12 +126,15 @@
                                 <p ex:content=".abstract"></p>
                                 <div class="other-properties">Other properties have been converted but not shown in this generic view.</div>
                             </div>
-                            <div ex:role="exhibit-lens" ex:itemTypes="Author" class="author">
+                            <div ex:role="exhibit-lens" ex:itemTypes="Author" class="author-lens">
                                 <span ex:control="copy-button" style="float: right"></span>
-                                <div class="title"><span ex:content=".label"></span></div>
+                                <div class="title"><span ex:content=".original-name"></span></div>
                                 
                                 <ol class="publications" ex:content="!author">
-                                    <li ex:content="value"></li>
+                                    <li><span ex:content=".label" class="publication-title"></span> by
+                                        <span ex:content=".author" class="authors"></span>
+                                        <span ex:if-exists=".year">, <span ex:content=".year" class="year"></span></span>
+                                    </li>
                                 </ol>
                             </div>
                             <div ex:role="exhibit-view"
