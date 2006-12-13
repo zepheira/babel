@@ -1,11 +1,13 @@
 package edu.mit.simile.babel;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringBufferInputStream;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
@@ -175,23 +177,35 @@ public class TranslatorServlet extends HttpServlet {
 			while ((part = parser.readNextPart()) != null) {
 				if (part.isFile()) {
 					FilePart filePart = (FilePart) part;
-					Reader reader = new InputStreamReader(filePart.getInputStream());
-					try {
-						readerProperties.setProperty("namespace", generateNamespace(request));
-						converter.read(reader, sail, readerProperties, locale);
-					} finally {
-						reader.close();
-					}
-				} else if (part.isParam()) {
-					ParamPart paramPart = (ParamPart) part;
-					String paramName = paramPart.getName();
-					if (paramName.equals("raw-text")) {
-						StringReader reader = new StringReader(paramPart.getStringValue());
+					if (converter.takesReader()) {
+						Reader reader = new InputStreamReader(filePart.getInputStream());
 						try {
 							readerProperties.setProperty("namespace", generateNamespace(request));
 							converter.read(reader, sail, readerProperties, locale);
 						} finally {
 							reader.close();
+						}
+					} else {
+						InputStream inputStream = filePart.getInputStream();
+						try {
+							readerProperties.setProperty("namespace", generateNamespace(request));
+							converter.read(inputStream, sail, readerProperties, locale);
+						} finally {
+							inputStream.close();
+						}
+					}
+				} else if (part.isParam()) {
+					ParamPart paramPart = (ParamPart) part;
+					String paramName = paramPart.getName();
+					if (paramName.equals("raw-text")) {
+						if (converter.takesReader()) {
+							StringReader reader = new StringReader(paramPart.getStringValue());
+							try {
+								readerProperties.setProperty("namespace", generateNamespace(request));
+								converter.read(reader, sail, readerProperties, locale);
+							} finally {
+								reader.close();
+							}
 						}
 					} else if (paramName.equals("url")) {
 						String url = paramPart.getStringValue();
@@ -207,16 +221,25 @@ public class TranslatorServlet extends HttpServlet {
 							}
 							
 							InputStream inputStream = connection.getInputStream();
-							String encoding = connection.getContentEncoding();
-							
-							Reader reader = new InputStreamReader(
-								inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
-										
-							try {
-								readerProperties.setProperty("namespace", makeIntoNamespace(url));
-								converter.read(reader, sail, readerProperties, locale);
-							} finally {
-								reader.close();
+							if (converter.takesReader()) {
+								String encoding = connection.getContentEncoding();
+								
+								Reader reader = new InputStreamReader(
+									inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
+											
+								try {
+									readerProperties.setProperty("namespace", makeIntoNamespace(url));
+									converter.read(reader, sail, readerProperties, locale);
+								} finally {
+									reader.close();
+								}
+							} else {
+								try {
+									readerProperties.setProperty("namespace", makeIntoNamespace(url));
+									converter.read(inputStream, sail, readerProperties, locale);
+								} finally {
+									inputStream.close();
+								}
 							}
 						}
 					}

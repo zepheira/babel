@@ -1,10 +1,13 @@
 package edu.mit.simile.babel.generic;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
@@ -51,6 +54,20 @@ public class N3Converter implements BabelReader, BabelWriter {
 	 */
 	public SerializationFormat getSerializationFormat() {
 		return N3Format.s_singleton;
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mit.simile.babel.BabelReader#takesReader()
+	 */
+	public boolean takesReader() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.mit.simile.babel.BabelReader#read(java.io.InputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
+	 */
+	public void read(InputStream inputStream, Sail sail, Properties properties, Locale locale) throws Exception {
+		throw new NotImplementedException();
 	}
 
 	/* (non-Javadoc)
@@ -102,6 +119,20 @@ public class N3Converter implements BabelReader, BabelWriter {
 		}.initialize(sail.getConnection()));
 		
 		parser.parse(reader, "");
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mit.simile.babel.BabelWriter#takesWriter()
+	 */
+	public boolean takesWriter() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.mit.simile.babel.BabelWriter#write(java.io.OutputStream, org.openrdf.sail.Sail, java.util.Properties, java.util.Locale)
+	 */
+	public void write(OutputStream outputStream, Sail sail, Properties properties, Locale locale) throws Exception {
+		throw new NotImplementedException();
 	}
 
 	/* (non-Javadoc)
