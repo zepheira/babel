@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -22,8 +23,12 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
+import org.mozilla.javascript.CompilerEnvirons;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
+import org.mozilla.javascript.RelaxedJSONException;
+import org.mozilla.javascript.RelaxedJSONParser;
 
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -73,8 +78,11 @@ public class ValidatorServlet extends HttpServlet {
 			if (part.isFile()) {
 				FilePart filePart = (FilePart) part;
 				Reader reader = new InputStreamReader(filePart.getInputStream());
-				
-				internalHandle(request, response, readerToString(reader));
+				try {
+					internalHandle(request, response, reader);
+				} finally {
+					reader.close();
+				}
 				break;
 			}
 		}
@@ -133,10 +141,13 @@ public class ValidatorServlet extends HttpServlet {
 			
 			Reader reader = new InputStreamReader(
 				inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
-			
-        	internalHandle(request, response, readerToString(reader));
+			try {
+				internalHandle(request, response, reader);
+			} finally {
+				reader.close();
+			}
         } else if (expression != null) {
-        	internalHandle(request, response, expression);
+        	internalHandle(request, response, new StringReader(expression));
         } else {
             try {
                 VelocityContext vcContext = new VelocityContext();
@@ -150,16 +161,19 @@ public class ValidatorServlet extends HttpServlet {
 	}
 	
 	protected void internalHandle(
-		HttpServletRequest request, 
+		HttpServletRequest 	request, 
 		HttpServletResponse response,
-		String code
+		Reader 				code
 	) throws ServletException, IOException {
-        EvaluatorException e = null;
-        try {
-	        Context c = Context.enter();
-	        c.compileString(code, "", 1, null);
-        } catch (EvaluatorException e2) {
-        	e = e2;
+        MyErrorReporter errorReporter = new MyErrorReporter();
+        {
+	        Context context = Context.enter();
+	        
+	        CompilerEnvirons compilerEnv = new CompilerEnvirons();
+	        compilerEnv.initFromContext(context);
+	        
+	        RelaxedJSONParser parser = new RelaxedJSONParser(compilerEnv, errorReporter);
+	        parser.check(code, "", 1);
         }
         
         try {
@@ -168,60 +182,8 @@ public class ValidatorServlet extends HttpServlet {
 	            StringWriter writer = new StringWriter();
 	            
 	            vcContext.put("hasCode", new Boolean(true));
-	            vcContext.put("hasError", e != null);
-	            if (e != null) {
-	            	String line = e.lineSource();
-	            	int lineNumber = e.lineNumber() - 1;
-	            	int colNumber = e.columnNumber();
-	            	
-	            	StringBuffer preceedingLines = new StringBuffer();
-	            	StringBuffer succeedingLines = new StringBuffer();
-	            	{
-	            		int startLine = Math.max(0, lineNumber - 5);
-	            		int endLine = e.lineNumber() + 5;
-	            		
-	            		LineNumberReader reader = new LineNumberReader(new StringReader(code));
-	            		
-	            		int l = 0;
-	            		while (l < startLine) {
-	            			reader.readLine();
-	            			l++;
-	            		}
-	            		
-	            		while (l < lineNumber) {
-	            			preceedingLines.append(reader.readLine());
-	            			preceedingLines.append("\n");
-	            			l++;
-	            		}
-	            		
-	            		reader.readLine();
-	            		
-	            		while (l < endLine) {
-	            			String s = reader.readLine();
-	            			if (s != null) {
-		            			succeedingLines.append(s);
-		            			succeedingLines.append("\n");
-		            			l++;
-	            			} else {
-	            				break;
-	            			}
-	            		}
-	            	}	            	
-	            	
-	            	vcContext.put("message", e.details());
-	            	vcContext.put("line", new Integer(e.lineNumber()));
-	            	vcContext.put("preceedingLines", preceedingLines.toString());
-	            	vcContext.put("succeedingLines", succeedingLines.toString());
-	            	if (colNumber > 0) {
-	            		vcContext.put("prefix", line.substring(0, colNumber - 1));
-	            		vcContext.put("highlight", line.substring(colNumber - 1, colNumber));
-	            		vcContext.put("suffix", line.substring(colNumber));
-	            	} else {
-	            		vcContext.put("prefix", "");
-	            		vcContext.put("highlight", line);
-	            		vcContext.put("suffix", "");
-	            	}
-	            }
+	            vcContext.put("hasError", errorReporter.m_errors.size() > 0);
+	            vcContext.put("errors", errorReporter.m_errors);
 	            
 	            writer.close();
             }
@@ -232,22 +194,19 @@ public class ValidatorServlet extends HttpServlet {
         }
 	}
 	
-	protected String readerToString(Reader reader) throws IOException {
-        StringBuffer sb = new StringBuffer();
-		sb.append("(");
-		{
-			char[] chars = new char[1024];
-			int c;
-			try {
-				while ((c = reader.read(chars)) > 0) {
-					sb.append(chars, 0, c);
-				}
-			} finally {
-				reader.close();
-			}
-		}
-		sb.append(")");
+	protected class MyErrorReporter implements ErrorReporter {
+		public List<RelaxedJSONException> m_errors = new ArrayList<RelaxedJSONException>();
 		
-		return sb.toString();
+		public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+			m_errors.add(new RelaxedJSONException(message, sourceName, line, lineSource, lineOffset));
+		}
+
+		public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
+			return null;
+		}
+
+		public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+			m_errors.add(new RelaxedJSONException(message, sourceName, line, lineSource, lineOffset));
+		}
 	}
 }

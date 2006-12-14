@@ -7,7 +7,7 @@
             body {
                 height: 800px;
             }
-            #error-message {
+            div.error-message {
                 font-size: 150%;
                 color: #800;
                 font-family: monospace;
@@ -19,11 +19,6 @@
             }
             #no-error-explanation {
                 width: 3in;
-            }
-            .highlight {
-                background: yellow;
-                padding: 2px;
-                border: 1px solid red;
             }
         </style>
     </head>
@@ -38,18 +33,15 @@
 
 #if($hasCode)
     #if($hasError)
-        <div id="error-message">Error: $message (line $line)</div>
-        <pre>$preceedingLines$prefix<span class="highlight">$highlight</span>$suffix
-$succeedingLines</pre>
-        <p><b>NOTES</b>: We are not able to pinpoint the error precisely. 
-            Please also check the previous and next lines.
-        </p>
+        #foreach($e in $errors)
+            <div class="error-message">$e.details(), line $e.lineNumber(), column $e.columnNumber()</div>
+            <pre>$e.lineSource()</pre>
+        #end
     #else
         <div id="no-error-message">Your code has no syntax error.</div>
         <p id="no-error-explanation">If you're led to this page because 
-            Exhibit said your code has errors, it's most probably because 
-            your code references some objects that don't exist or some
-            properties that don't exist.
+            Exhibit said your code has errors, then 
+            <a href="mailto:general@simile.mit.edu?subject=Validator problem">let us know</a>.
         </p>
     #end
     <hr/>
@@ -58,7 +50,7 @@ $succeedingLines</pre>
                 method="post" enctype="multipart/form-data" action="validator">
                 <p>Upload and validate files:</p>
                 <div id="convert-form-body">
-                    <div><input type="file" name="file" size="80" id="file" /></div>
+                    <div><input type="file" name="upload-file" size="80" id="upload-file"></input></div>
                     <div>Note: We do not store your data on our server.</div>
                 </div>
                 <p><input type="submit" value="Upload and Validate" /></p>
