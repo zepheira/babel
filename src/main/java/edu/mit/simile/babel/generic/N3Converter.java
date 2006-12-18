@@ -12,7 +12,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.n3.N3Writer;
-import org.openrdf.rio.ntriples.NTriplesParser;
+import org.openrdf.rio.turtle.TurtleParser;
 import org.openrdf.sail.Namespace;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
@@ -76,7 +76,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 
-		NTriplesParser parser = new NTriplesParser();
+		TurtleParser parser = new TurtleParser();
 		parser.setRDFHandler(new RDFHandler() {
 			SailConnection m_connection;
 			
