@@ -31,6 +31,11 @@
         <servlet-class>edu.mit.simile.babel.ValidatorServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>ExhibitFeeder</servlet-name>
+        <servlet-class>edu.mit.simile.babel.ExhibitFeederServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Translator</servlet-name>
@@ -51,6 +56,10 @@
     <servlet-mapping>
         <servlet-name>Validator</servlet-name>
         <url-pattern>/validator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExhibitFeeder</servlet-name>
+        <url-pattern>/exhibit-feeder</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -173,12 +173,14 @@ public class TranslatorServlet extends HttpServlet {
 			
 			Part part = null;
 			while ((part = parser.readNextPart()) != null) {
+                readerProperties.setProperty("namespace", generateNamespace(request));
+                readerProperties.setProperty("url", "");
+                
 				if (part.isFile()) {
 					FilePart filePart = (FilePart) part;
 					if (converter.takesReader()) {
 						Reader reader = new InputStreamReader(filePart.getInputStream());
 						try {
-							readerProperties.setProperty("namespace", generateNamespace(request));
 							converter.read(reader, sail, readerProperties, locale);
 						} finally {
 							reader.close();
@@ -186,7 +188,6 @@ public class TranslatorServlet extends HttpServlet {
 					} else {
 						InputStream inputStream = filePart.getInputStream();
 						try {
-							readerProperties.setProperty("namespace", generateNamespace(request));
 							converter.read(inputStream, sail, readerProperties, locale);
 						} finally {
 							inputStream.close();
@@ -199,7 +200,6 @@ public class TranslatorServlet extends HttpServlet {
 						if (converter.takesReader()) {
 							StringReader reader = new StringReader(paramPart.getStringValue());
 							try {
-								readerProperties.setProperty("namespace", generateNamespace(request));
 								converter.read(reader, sail, readerProperties, locale);
 							} finally {
 								reader.close();
@@ -218,6 +218,9 @@ public class TranslatorServlet extends HttpServlet {
 								continue;
 							}
 							
+                            readerProperties.setProperty("namespace", makeIntoNamespace(url));
+                            readerProperties.setProperty("url", url);
+
 							InputStream inputStream = connection.getInputStream();
 							if (converter.takesReader()) {
 								String encoding = connection.getContentEncoding();
@@ -226,14 +229,12 @@ public class TranslatorServlet extends HttpServlet {
 									inputStream, (encoding == null) ? "ISO-8859-1" : encoding);
 											
 								try {
-									readerProperties.setProperty("namespace", makeIntoNamespace(url));
 									converter.read(reader, sail, readerProperties, locale);
 								} finally {
 									reader.close();
 								}
 							} else {
 								try {
-									readerProperties.setProperty("namespace", makeIntoNamespace(url));
 									converter.read(inputStream, sail, readerProperties, locale);
 								} finally {
 									inputStream.close();
