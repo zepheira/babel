@@ -1,12 +1,15 @@
 package edu.mit.simile.babel;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.memory.MemoryStore;
 
@@ -39,6 +45,27 @@ public class TranslatorServlet extends HttpServlet {
 	final static private long serialVersionUID = 2083937775584527297L;
 	final static private Logger s_logger = Logger.getLogger(TranslatorServlet.class);
 	
+    private VelocityEngine m_ve;
+    
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        
+        try {
+            File webapp = new File(getServletContext().getRealPath("/"));
+            
+            Properties velocityProperties = new Properties();
+            velocityProperties.setProperty(
+                    RuntimeConstants.FILE_RESOURCE_LOADER_PATH, 
+                    new File(new File(webapp, "WEB-INF"), "templates").getAbsolutePath());
+            
+            m_ve = new VelocityEngine();
+            m_ve.init(velocityProperties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
@@ -147,15 +174,15 @@ public class TranslatorServlet extends HttpServlet {
 				writeResult(babelWriter, store, writerProperties, writer, locale);
 				
 				return true;
-			} catch (BabelException e) {
-				e.printStackTrace();
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} finally {
 				store.shutDown();
 			}
 		} catch (Exception e) {
 			s_logger.error(e);
+            
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            
+            writeError(writer, e);
 		}
 		return false;
 	}
@@ -263,6 +290,26 @@ public class TranslatorServlet extends HttpServlet {
 			throw new BabelException(e);
 		}
 	}
+    
+    protected void writeError(Writer writer, Exception e) throws ServletException {
+        try {
+            VelocityContext vcContext = new VelocityContext();
+            vcContext.put("exception", e);
+            vcContext.put("isBabelException", Boolean.valueOf(e instanceof BabelException));
+            {
+                StringWriter stringWriter = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(stringWriter);
+                e.printStackTrace(printWriter);
+                printWriter.close();
+                
+                vcContext.put("stackTrace", stringWriter.toString());
+            }
+            
+            m_ve.mergeTemplate("error.vt", vcContext, writer);
+        } catch (Throwable e2) {
+            throw new ServletException(e2);
+        }
+    }
 	
 	protected void setContentEncodingAndMimetype(
 			BabelWriter writer, HttpServletResponse response, String mimetype) {
