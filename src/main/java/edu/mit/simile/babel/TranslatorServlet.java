@@ -180,11 +180,8 @@ public class TranslatorServlet extends HttpServlet {
 		} catch (Exception e) {
 			s_logger.error(e);
             
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            
-            writeError(writer, e);
-            response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html");
+            writeError(writer, e);
 		}
 		return false;
 	}
