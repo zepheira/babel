@@ -182,6 +182,7 @@ public class TranslatorServlet extends HttpServlet {
             
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             
+            response.setContentType("text/html");
             writeError(writer, e);
 		}
 		return false;
