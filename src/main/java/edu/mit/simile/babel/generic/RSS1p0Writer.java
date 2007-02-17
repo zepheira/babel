@@ -1,5 +1,7 @@
 package edu.mit.simile.babel.generic;
 
+import info.aduna.collections.iterators.CloseableIterator;
+
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
-import org.openrdf.util.iterator.CloseableIterator;
+import org.openrdf.sail.SailException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -197,12 +199,12 @@ public class RSS1p0Writer implements BabelWriter {
         return element;
     }
     
-    static protected String _getObjectString(Resource subject, URI predicate, SailConnection c) {
+    static protected String _getObjectString(Resource subject, URI predicate, SailConnection c) throws SailException {
         Value v = _getObject(subject, predicate, c);
         return v instanceof Literal ? ((Literal) v).getLabel() : null;
     }
     
-    static protected Value _getObject(Resource subject, URI predicate, SailConnection c) {
+    static protected Value _getObject(Resource subject, URI predicate, SailConnection c) throws SailException {
         CloseableIterator<? extends Statement> i = c.getStatements(subject, predicate, null, true);
         try {
             if (i.hasNext()) {

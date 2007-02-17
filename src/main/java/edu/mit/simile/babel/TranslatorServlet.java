@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailInitializationException;
 import org.openrdf.sail.memory.MemoryStore;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -154,7 +153,7 @@ public class TranslatorServlet extends HttpServlet {
 			} finally {
 				store.shutDown();
 			}
-		} catch (SailInitializationException e) {
+		} catch (Exception e) {
 			s_logger.error(e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

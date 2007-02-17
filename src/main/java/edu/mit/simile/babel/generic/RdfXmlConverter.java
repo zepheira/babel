@@ -1,5 +1,7 @@
 package edu.mit.simile.babel.generic;
 
+import info.aduna.collections.iterators.CloseableIterator;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -17,7 +19,6 @@ import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
-import org.openrdf.util.iterator.CloseableIterator;
 
 import edu.mit.simile.babel.BabelReader;
 import edu.mit.simile.babel.BabelWriter;
