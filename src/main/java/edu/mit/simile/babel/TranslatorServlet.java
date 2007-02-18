@@ -62,7 +62,7 @@ public class TranslatorServlet extends HttpServlet {
             m_ve = new VelocityEngine();
             m_ve.init(velocityProperties);
         } catch (Exception e) {
-            e.printStackTrace();
+            s_logger.error("Error initializing TranslatorServlet", e);
         }
     }
     
@@ -75,6 +75,10 @@ public class TranslatorServlet extends HttpServlet {
 			new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 		try {
 			internalDoPost(request, response, params, writer);
+        } catch (Exception e) {
+            PrintWriter printWriter = new PrintWriter(writer);
+            e.printStackTrace(printWriter);
+            printWriter.flush();
 		} finally {
 			writer.close();
 		}
