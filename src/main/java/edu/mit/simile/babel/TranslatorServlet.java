@@ -181,7 +181,7 @@ public class TranslatorServlet extends HttpServlet {
 			} finally {
 				store.shutDown();
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			s_logger.error(e);
             
             response.setContentType("text/html");
@@ -294,7 +294,7 @@ public class TranslatorServlet extends HttpServlet {
 		}
 	}
     
-    protected void writeError(Writer writer, Exception e) throws ServletException {
+    protected void writeError(Writer writer, Throwable e) throws ServletException {
         try {
             VelocityContext vcContext = new VelocityContext();
             vcContext.put("exception", e);
