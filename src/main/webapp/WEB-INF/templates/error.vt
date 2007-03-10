@@ -28,10 +28,12 @@
             <h1>Babel Error</h1>
 
             <h2>Error Description</h2>
-            <div class="error-message">$exception.getMessage()</div>
+            <div class="error-message">$message</div>
 
+            #if($hasException)
             <h2>Technical Details</h2>
             <pre>$stackTrace</pre>
+            #end
         </div>
     </body>
 </html>

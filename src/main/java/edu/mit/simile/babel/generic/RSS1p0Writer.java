@@ -1,6 +1,6 @@
 package edu.mit.simile.babel.generic;
 
-import info.aduna.collections.iterators.CloseableIterator;
+import info.aduna.iteration.CloseableIteration;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -117,7 +117,7 @@ public class RSS1p0Writer implements BabelWriter {
 		
 		SailConnection connection = sail.getConnection();
 		try {
-            CloseableIterator<? extends Statement> statements =
+			CloseableIteration<? extends Statement, SailException> statements =
                 connection.getStatements(null, RDF.TYPE, null, true);
             try {
                 while (statements.hasNext()) {
@@ -135,7 +135,7 @@ public class RSS1p0Writer implements BabelWriter {
                         
                         StringBuffer stringBuffer = new StringBuffer();
                         {
-                            CloseableIterator<? extends Statement> statements2 =
+                        	CloseableIteration<? extends Statement, SailException> statements2 =
                                 connection.getStatements(subject, null, null, true);
                             try {
                                 while (statements2.hasNext()) {
@@ -161,6 +161,9 @@ public class RSS1p0Writer implements BabelWriter {
             } finally {
                 statements.close();
             }
+		} catch (Exception e) {
+			connection.rollback();
+			throw e;
         } finally {
             connection.close();
         }
@@ -205,7 +208,8 @@ public class RSS1p0Writer implements BabelWriter {
     }
     
     static protected Value _getObject(Resource subject, URI predicate, SailConnection c) throws SailException {
-        CloseableIterator<? extends Statement> i = c.getStatements(subject, predicate, null, true);
+    	CloseableIteration<? extends Statement, SailException> i = 
+    		c.getStatements(subject, predicate, null, true);
         try {
             if (i.hasNext()) {
                 return i.next().getObject();

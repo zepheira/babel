@@ -48,44 +48,50 @@ public class PreviewServlet extends TranslatorServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            String template = null;
-            
-            String[] params = StringUtils.splitPreserveAllTokens(request.getQueryString(), '&');
-            for (int i = 0; i < params.length; i++) {
-                String param = params[i];
-                int equalIndex = param.indexOf('=');
+        String template = null;
+        
+        String[] params = StringUtils.splitPreserveAllTokens(request.getQueryString(), '&');
+        for (int i = 0; i < params.length; i++) {
+            String param = params[i];
+            int equalIndex = param.indexOf('=');
 
-                if (equalIndex >= 0) {
-                    String name = param.substring(0, equalIndex);
-                    if ("template".equals(name)) {
-                    	template = Util.decode(param.substring(equalIndex + 1));
-                    	break;
-                    }
+            if (equalIndex >= 0) {
+                String name = param.substring(0, equalIndex);
+                if ("template".equals(name)) {
+                	template = Util.decode(param.substring(equalIndex + 1));
+                	break;
                 }
             }
-            
-            VelocityContext vcContext = new VelocityContext();
-            {
-	            StringWriter writer = new StringWriter();
-	            
-	            internalDoPost(request, response, params, writer);
-	            
+        }
+
+        StringWriter writer = new StringWriter();
+		try {
+			ResponseInfo responseInfo = internalService(request, response, params, writer);
+			if (responseInfo.m_status != HttpServletResponse.SC_OK) {
+				writeBufferedResponse(response, writer, responseInfo);
+			} else {
+	            VelocityContext vcContext = new VelocityContext();
+		            
 	            vcContext.put("data", writer.toString());
 	            vcContext.put("utilities", new PreviewUtilities());
-	            
-	            writer.close();
-            }
-            
-            m_ve.mergeTemplate(template, vcContext, response.getWriter());
-        } catch (Throwable e) {
-        	throw new ServletException(e);
-        }
+		            
+	    		response.setCharacterEncoding("UTF-8");
+	    		response.setContentType("text/html");
+	    		response.setStatus(HttpServletResponse.SC_OK);
+	    		
+	            m_ve.mergeTemplate(template, vcContext, response.getWriter());
+			}
+		} catch (Exception e) {
+			writeError(writer, "Internal error", e);
+		} finally {
+			writer.close();
+		}
 	}
 	
 	@Override
-	protected void setContentEncodingAndMimetype(BabelWriter writer, HttpServletResponse response, String mimetype) {
-		// do nothing
-		response.setContentType("text/html");
+	protected void setContentEncodingAndMimetype(
+			ResponseInfo responseInfo, BabelWriter writer, String mimetype) {
+		responseInfo.m_contentEncoding = "UTF-8";
+		responseInfo.m_mimeType = "text/html";
 	}
 }

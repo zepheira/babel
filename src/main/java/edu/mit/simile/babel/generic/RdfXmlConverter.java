@@ -1,6 +1,6 @@
 package edu.mit.simile.babel.generic;
 
-import info.aduna.collections.iterators.CloseableIterator;
+import info.aduna.iteration.CloseableIteration;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -77,49 +77,57 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale)
 			throws Exception {
 
-		RDFXMLParser parser = new RDFXMLParser();
-		parser.setRDFHandler(new RDFHandler() {
-			SailConnection m_connection;
+		SailConnection connection = sail.getConnection();
+		try {
+			RDFXMLParser parser = new RDFXMLParser();
+			parser.setRDFHandler(new RDFHandler() {
+				SailConnection m_connection;
+				
+				public void startRDF() throws RDFHandlerException {
+					// nothing
+				}
 			
-			public void startRDF() throws RDFHandlerException {
-				// nothing
-			}
-		
-			public void handleStatement(Statement s) throws RDFHandlerException {
-				try {
-					m_connection.addStatement(s.getSubject(), s.getPredicate(), s.getObject(), s.getContext());
-				} catch (SailException e) {
-					throw new RDFHandlerException(e);
+				public void handleStatement(Statement s) throws RDFHandlerException {
+					try {
+						m_connection.addStatement(s.getSubject(), s.getPredicate(), s.getObject(), s.getContext());
+					} catch (SailException e) {
+						throw new RDFHandlerException(e);
+					}
 				}
-			}
-		
-			public void handleNamespace(String prefix, String name) throws RDFHandlerException {
-				try {
-					m_connection.setNamespace(prefix, name);
-				} catch (SailException e) {
-					throw new RDFHandlerException(e);
-				}
-			}
-		
-			public void handleComment(String arg0) throws RDFHandlerException {
-				// nothing
-			}
-		
-			public void endRDF() throws RDFHandlerException {
-				try {
-					m_connection.commit();
-				} catch (SailException e) {
-					throw new RDFHandlerException(e);
-				}
-			}
 			
-			public RDFHandler initialize(SailConnection c) {
-				m_connection = c;
-				return this;
-			}
-		}.initialize(sail.getConnection()));
-		
-		parser.parse(reader, "");
+				public void handleNamespace(String prefix, String name) throws RDFHandlerException {
+					try {
+						m_connection.setNamespace(prefix, name);
+					} catch (SailException e) {
+						throw new RDFHandlerException(e);
+					}
+				}
+			
+				public void handleComment(String arg0) throws RDFHandlerException {
+					// nothing
+				}
+			
+				public void endRDF() throws RDFHandlerException {
+					try {
+						m_connection.commit();
+					} catch (SailException e) {
+						throw new RDFHandlerException(e);
+					}
+				}
+				
+				public RDFHandler initialize(SailConnection c) {
+					m_connection = c;
+					return this;
+				}
+			}.initialize(connection));
+			
+			parser.parse(reader, "");
+		} catch (Exception e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.close();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -143,32 +151,38 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 			throws Exception {
 		
 		SailConnection connection = sail.getConnection();
-		
-		RDFXMLWriter rdfWriter = new RDFXMLWriter(writer);
-		
-		rdfWriter.startRDF();
-			CloseableIterator<? extends Namespace> n = sail.getConnection().getNamespaces();
-			try {
-				while (n.hasNext()) {
-					Namespace ns = n.next();
-					rdfWriter.handleNamespace(ns.getPrefix(), ns.getName());
-				}
-			} finally {
-				n.close();
-			}
+		try {
+			RDFXMLWriter rdfWriter = new RDFXMLWriter(writer);
 			
-			CloseableIterator<? extends Statement> i = 
-				sail.getConnection().getStatements(null, null, null, false);
-			try {
-				while (i.hasNext()) {
-					rdfWriter.handleStatement(i.next()); 
+			rdfWriter.startRDF();
+				CloseableIteration<? extends Namespace, SailException> n = sail.getConnection().getNamespaces();
+				try {
+					while (n.hasNext()) {
+						Namespace ns = n.next();
+						rdfWriter.handleNamespace(ns.getPrefix(), ns.getName());
+					}
+				} finally {
+					n.close();
 				}
-			} finally {
-				i.close();
-			}
-		rdfWriter.endRDF();
-		
-		connection.commit();
+				
+				CloseableIteration<? extends Statement, SailException> i = 
+					sail.getConnection().getStatements(null, null, null, false);
+				try {
+					while (i.hasNext()) {
+						rdfWriter.handleStatement(i.next()); 
+					}
+				} finally {
+					i.close();
+				}
+			rdfWriter.endRDF();
+			
+			connection.commit();
+		} catch (Exception e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.close();
+		}
 	}
 
 }
