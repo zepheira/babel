@@ -155,7 +155,7 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 			RDFXMLWriter rdfWriter = new RDFXMLWriter(writer);
 			
 			rdfWriter.startRDF();
-				CloseableIteration<? extends Namespace, SailException> n = sail.getConnection().getNamespaces();
+				CloseableIteration<? extends Namespace, SailException> n = connection.getNamespaces();
 				try {
 					while (n.hasNext()) {
 						Namespace ns = n.next();
@@ -166,7 +166,7 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 				}
 				
 				CloseableIteration<? extends Statement, SailException> i = 
-					sail.getConnection().getStatements(null, null, null, false);
+					connection.getStatements(null, null, null, false);
 				try {
 					while (i.hasNext()) {
 						rdfWriter.handleStatement(i.next()); 
@@ -175,11 +175,6 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 					i.close();
 				}
 			rdfWriter.endRDF();
-			
-			connection.commit();
-		} catch (Exception e) {
-			connection.rollback();
-			throw e;
 		} finally {
 			connection.close();
 		}

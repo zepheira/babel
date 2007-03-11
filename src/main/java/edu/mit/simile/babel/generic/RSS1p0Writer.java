@@ -161,9 +161,6 @@ public class RSS1p0Writer implements BabelWriter {
             } finally {
                 statements.close();
             }
-		} catch (Exception e) {
-			connection.rollback();
-			throw e;
         } finally {
             connection.close();
         }

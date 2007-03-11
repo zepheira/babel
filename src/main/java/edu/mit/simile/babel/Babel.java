@@ -34,7 +34,9 @@ public class Babel {
         addReader("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonReader");
         addReader("exhibit-html", "edu.mit.simile.babel.exhibit.ExhibitWebPageReader");
 		addWriter("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonWriter");
+		addWriter("exhibit-jsonp", "edu.mit.simile.babel.exhibit.ExhibitJsonpWriter");
 		addWriter("bibtex-exhibit-json", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonWriter");
+		addWriter("bibtex-exhibit-jsonp", "edu.mit.simile.babel.exhibit.BibtexExhibitJsonpWriter");
 		
 		s_previewTemplates.put("exhibit-json", "exhibit.vt");
 		s_previewTemplates.put("bibtex-exhibit-json", "bibtex-exhibit.vt");

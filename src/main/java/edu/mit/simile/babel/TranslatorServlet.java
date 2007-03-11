@@ -267,10 +267,10 @@ public class TranslatorServlet extends HttpServlet {
 			// silent
 		}
 		
+        readerProperties.setProperty("namespace", generateNamespace(request));
 		if (parser != null) {
 			Part part = null;
 			while ((part = parser.readNextPart()) != null) {
-	            readerProperties.setProperty("namespace", generateNamespace(request));
 	            readerProperties.setProperty("url", "");
 	            
 				if (part.isFile()) {

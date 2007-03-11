@@ -108,11 +108,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 				}
 			
 				public void endRDF() throws RDFHandlerException {
-					try {
-						m_connection.commit();
-					} catch (SailException e) {
-						throw new RDFHandlerException(e);
-					}
+					// nothing
 				}
 				
 				public RDFHandler initialize(SailConnection c) {
@@ -122,6 +118,8 @@ public class N3Converter implements BabelReader, BabelWriter {
 			}.initialize(connection));
 			
 			parser.parse(reader, "");
+			
+			connection.commit();
 		} catch (Exception e) {
 			connection.rollback();
 			throw e;
@@ -155,7 +153,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 			N3Writer n3Writer = new N3Writer(writer);
 			
 			n3Writer.startRDF();
-				CloseableIteration<? extends Namespace, SailException> n = sail.getConnection().getNamespaces();
+				CloseableIteration<? extends Namespace, SailException> n = connection.getNamespaces();
 				try {
 					while (n.hasNext()) {
 						Namespace ns = n.next();
@@ -166,7 +164,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 				}
 				
 				CloseableIteration<? extends Statement, SailException> i = 
-					sail.getConnection().getStatements(null, null, null, false);
+					connection.getStatements(null, null, null, false);
 				try {
 					while (i.hasNext()) {
 						n3Writer.handleStatement(i.next()); 
@@ -175,11 +173,6 @@ public class N3Converter implements BabelReader, BabelWriter {
 					i.close();
 				}
 			n3Writer.endRDF();
-			
-			connection.commit();
-		} catch (Exception e) {
-			connection.rollback();
-			throw e;
 		} finally {
 			connection.close();
 		}
