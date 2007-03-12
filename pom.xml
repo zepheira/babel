@@ -162,27 +162,27 @@
         <dependency>
             <groupId>edu.mit.simile</groupId>
             <artifactId>babel-interfaces</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.mit.simile</groupId>
             <artifactId>bibtex-converter</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.mit.simile</groupId>
             <artifactId>exhibit-converter</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.mit.simile</groupId>
             <artifactId>tsv-converter</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.mit.simile</groupId>
             <artifactId>xls-converter</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         
 		<!-- =============== Logging =============== -->
