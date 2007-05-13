@@ -179,6 +179,8 @@ public class TranslatorServlet extends HttpServlet {
 					mimetype = value;
 				} else if (name.equals("url")) {
 					urls.add(value);
+                } else if (name.equals("callback")) {
+                    writerProperties.setProperty(name, value);
 				}
             }
 		}
