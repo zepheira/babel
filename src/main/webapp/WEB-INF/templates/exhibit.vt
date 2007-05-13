@@ -6,7 +6,9 @@
         <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
         <script type="text/javascript">
             var exhibit;
+
         
+
             function getForm() {
                 return document.getElementById("data-form");
             }
@@ -15,30 +17,50 @@
             }
             function onLoad() {
                 var data = eval("(" + getTextarea().value + ")");
-                var properties = [];
+                var properties = [ ".type" ];
                 for (var p in data.properties) {
                     properties.push("." + p);
                 }
+
                 var configuration = {
                     BrowseEngine: {
+
                         facets: properties
+
                     },
+
                     ViewPanel: {
+
                         views: [
+
                             {   viewClass: Exhibit.TileView,
+
                                 label: "Details",
+
                                 configuration: {
+
                                     orders: [
+
                                         ".type"
+
                                     ],
+
                                     possibleOrders: properties
+
                                 }
+
                             }
+
                         ]
+
                     }
+
                 };
+
                     
+
                 exhibit = Exhibit.createAdvanced(configuration);
+
                 exhibit.loadData(data);
                 
                 var types = new Exhibit.Set();
@@ -46,8 +68,11 @@
                     types.add(t);
                 }
                 
+
                 exhibit.getBrowseEngine().setRootCollection(
+
                     exhibit.getDatabase().getSubjectsUnion(types, "type")
+
                 );
                 
                 document.getElementById("close-button").onclick = function(evt) {
@@ -58,6 +83,7 @@
                     evt.stopPropagation();
                     return false;
                 };
+
             }
             function copyRawData() {
                 getForm().style.display = "block";
@@ -69,6 +95,7 @@
             function downloadRawData() {
                 getForm().submit();
             }
+
         </script>
         <style>
             div.publication {
@@ -123,15 +150,25 @@
                 <button onclick="downloadRawData();">Download Raw Data</button>
             </div>
             <table width="100%">
+
                 <tr valign="top">
+
                     <td>
+
                         <div id="exhibit-control-panel"></div>
+
                         <div id="exhibit-view-panel"></div>
+
                     </td>
+
                     <td width="30%">
+
                         <div id="exhibit-browse-panel"></div>
+
                     </td>
+
                 </tr>
+
             </table>
         </div>
         <form id="data-form" action="reflector?mimetype=application/json" method="post" enctype="multipart/form-data">
