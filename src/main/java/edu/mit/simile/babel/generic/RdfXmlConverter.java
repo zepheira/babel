@@ -121,7 +121,7 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 				}
 			}.initialize(connection));
 			
-			parser.parse(reader, "");
+			parser.parse(reader, properties.getProperty("namespace"));
 		} catch (Exception e) {
 			connection.rollback();
 			throw e;

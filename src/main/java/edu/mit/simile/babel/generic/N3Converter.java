@@ -117,7 +117,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 				}
 			}.initialize(connection));
 			
-			parser.parse(reader, "");
+			parser.parse(reader, properties.getProperty("namespace"));
 			
 			connection.commit();
 		} catch (Exception e) {
