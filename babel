@@ -17,15 +17,6 @@ where [options] include:
 
   -h print this message and exit
 
-  -c <configuration> the configuration that longwell should start
-     default: longwell
-
-  -p <path> is the paths where longwell will look for configurations
-     default:  ./src/main/webapp/
-
-  -d <database> the directory were the triple store files reside
-     default:  ./src/main/webapp/WEB-INF/database
-
   -a <action> is what to do, the default is run
    supported <action>s are:
     run          Run longwell
@@ -35,8 +26,6 @@ where [options] include:
     yourkit      Run longwell and turn on JVM profiling with YourKit
     jmx          Run longwell and turn on JVM monitoring with JMX and JConsole
 
-  -r <rdf> is the directory where the RDF data to load is
-    default: no data is loaded
 EOF
     exit 0
 }
@@ -59,10 +48,6 @@ absolute_path () {
 
 while [ $# -ne 0 ] ; do
   case "x$1" in
-    x-c) shift; add_option "-Dlongwell.configuration=$1"; shift; ;;
-    x-d) shift; add_option "-Dlongwell.store.dir=$1"; shift; ;;
-    x-p) shift; add_option "-Dlongwell.configuration.path=`absolute_path $1`"; shift; ;;
-    x-r) shift; add_option "-Dlongwell.data=`absolute_path $1`"; shift; ;;
     x-a) shift; ACTION="$1"; shift; ;;
     x-h) usage; ;;
     *) fail "malformed argument '$1', '$*' remain"; ;;
@@ -101,4 +86,5 @@ esac
 
 export MAVEN_OPTS
 echo "[INFO] MAVEN_OPTS: '$MAVEN_OPTS'"
+cd engine
 exec mvn $MAVEN_PARAMS jetty:run

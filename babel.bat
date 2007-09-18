@@ -19,15 +19,6 @@ echo where [options] include:
 echo.
 echo  /h print this message and exit
 echo.
-echo  /c _configuration_ the configuration that longwell should start
-echo     default: longwell
-echo.
-echo  /p _path_ is the paths where longwell will look for configurations
-echo     default:  ./src/main/webapp/
-echo.
-echo  /d _database_ the directory were the triple store files reside
-echo     default:  ./src/main/webapp/WEB-INF/database
-echo.
 echo  /a _action_ is what to do, the default is run
 echo   supported _action_s are:
 echo    run          Run longwell
@@ -37,8 +28,6 @@ echo    shark        Run longwell and turn on JVM profiling with Apple Shark (Ma
 echo    yourkit      Run longwell and turn on JVM profiling with YourKit
 echo    jmx          Run longwell and turn on JVM monitoring with JMX and JConsole
 echo.
-echo  /r _rdf_ is the directory where the RDF data to load is
-echo   default: no data is loaded
 goto end
 
 :fail
@@ -60,29 +49,9 @@ rem --- Argument parsing --------------------------------------------
 :loop
 if ""%1"" == """" goto endArgumentParsing
 if ""%1"" == ""/h"" goto usage
-if ""%1"" == ""/d"" goto arg-d
-if ""%1"" == ""/c"" goto arg-c
-if ""%1"" == ""/p"" goto arg-p
-if ""%1"" == ""/r"" goto arg-r
 if ""%1"" == ""/a"" goto arg-a
 echo ERROR: Unknown Argument: '%1'
 goto fail
-
-:arg-c
-set MAVEN_OPTS=%MAVEN_OPTS% -Dlongwell.configuration=%2
-goto shift2loop
-
-:arg-d
-set MAVEN_OPTS=%MAVEN_OPTS% -Dlongwell.store.dir=%~s2
-goto shift2loop 
-
-:arg-p
-set MAVEN_OPTS=%MAVEN_OPTS% -Dlongwell.configuration.path=%~s2
-goto shift2loop 
-
-:arg-r
-set MAVEN_OPTS=%MAVEN_OPTS% -Dlongwell.data=%~s2
-goto shift2loop 
 
 :arg-a
 set ACTION="$2"
@@ -94,7 +63,6 @@ shift
 goto loop
 
 :endArgumentParsing
-
 
 rem --- Fold in Environment Vars --------------------------------------------
 

@@ -6,7 +6,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.mit.simile</groupId>
-  <artifactId>bibtex-converter</artifactId>
+  <artifactId>babel-bibtex-converter</artifactId>
   <name>SIMILE Bibtex Converter</name>
   <version>1.0-SNAPSHOT</version>
   <description>Bibtex Converter is part of the Babel project. It reads and writes data in bibtex format.</description> 
@@ -16,43 +16,6 @@
       <artifactId>babel-converters</artifactId>
       <version>1.0-SNAPSHOT</version>
   </parent>
-
-	<repositories>
-	    <repository>
-	        <id>simile.mit.edu</id>
-	        <url>http://simile.mit.edu/maven-proxy</url>
-	    </repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>aduna-repo</id>
-			<name>Aduna Repository</name>
-			<url>http://repository.aduna-software.org/maven2</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>aduna-snapshot-repo</id>
-			<name>Aduna Snapshot Repository</name>
-			<url>http://repository.aduna-software.org/maven2-snapshots</url>
-		</repository>
-	</repositories>
 
   <dependencies>
 	<dependency>
