@@ -7,121 +7,17 @@
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel-interfaces</artifactId>
   <name>SIMILE Babel Interfaces</name>
-  <version>1.0.0-SNAPSHOT</version>
-  <description>Interfaces of Babel.</description> 
-  <url>http://simile.mit.edu/babel/</url>
-  <inceptionYear>2006</inceptionYear>
+  <version>1.0-SNAPSHOT</version>
+  <description>Interfaces of Babel</description> 
 
-  <issueManagement>
-    <system>jira</system>
-    <url>http://simile.mit.edu/issues/browse/BABEL</url>
-  </issueManagement>
-
-  <distributionManagement>
-    <repository>
-      <id>simile.mit.edu</id>
-      <url>scpexe://simile.mit.edu/var/maven</url>
-    </repository>
-  </distributionManagement>
-
-  <scm>
-    <connection>scm:svn:http://simile.mit.edu/repository/babel/trunk/</connection>
-    <developerConnection>scm:svn:http://simile.mit.edu/repository/babel/trunk/</developerConnection>
-    <url>http://simile.mit.edu/viewsvn/babel/trunk/</url>
-  </scm>
-
-  <build>
-    <plugins>
-	  <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>    
-	  <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>
-            <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-            <link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
-            <link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/logging/api/</link>
-            <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
-            <link>http://www.junit.org/junit/javadoc/</link>
-            <link>http://logging.apache.org/log4j/docs/api/</link>
-            <link>http://jakarta.apache.org/regexp/apidocs/</link>
-            <link>http://jakarta.apache.org/velocity/api/</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-           <descriptor>src/conf/assembly.xml</descriptor>
-          </descriptors>
-          <finalName>babel-interfaces-${project.version}</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <workDirectory>target/assembly/work</workDirectory>
-          <tarLongFileMode>error</tarLongFileMode>
-          <outputDirectory>.</outputDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  
-	<repositories>
-	    <repository>
-	        <id>simile.mit.edu</id>
-	        <url>http://simile.mit.edu/maven-proxy</url>
-	    </repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>aduna-repo</id>
-			<name>Aduna Repository</name>
-			<url>http://repository.aduna-software.org/maven2</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>aduna-snapshot-repo</id>
-			<name>Aduna Snapshot Repository</name>
-			<url>http://repository.aduna-software.org/maven2-snapshots</url>
-		</repository>
-	</repositories>
+  <parent>
+      <groupId>edu.mit.simile</groupId>
+      <artifactId>babel</artifactId>
+      <version>1.0-SNAPSHOT</version>
+  </parent>
 
   <dependencies>
+
 		<!-- =============== Sesame2 =============== -->
 		<dependency>
 			<groupId>org.openrdf</groupId>
