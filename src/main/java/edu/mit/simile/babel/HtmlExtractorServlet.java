@@ -139,7 +139,7 @@ public class HtmlExtractorServlet extends HttpServlet {
             return s_xhtml.equals(namespaceURI) ? "h" : null;
         }
 
-        public Iterator getPrefixes(String namespaceURI) {
+        public Iterator<String> getPrefixes(String namespaceURI) {
             List<String> l = new ArrayList<String>();
             if (s_xhtml.equals(namespaceURI)) {
                 l.add("h");

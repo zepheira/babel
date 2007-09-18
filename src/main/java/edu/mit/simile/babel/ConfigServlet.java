@@ -16,7 +16,9 @@ import edu.mit.simile.babel.util.IndentWriter;
 import edu.mit.simile.babel.util.JSObject;
 
 public class ConfigServlet extends HttpServlet {
+
 	private static final long serialVersionUID = -3750091194974192970L;
+
 	//final static private Logger s_logger = Logger.getLogger(ConfigServlet.class);
 
 	@Override
@@ -25,8 +27,8 @@ public class ConfigServlet extends HttpServlet {
 		
 		JSObject config = new JSObject();
 		
-		Map<Class, SerializationFormat> formats = new HashMap<Class, SerializationFormat>();
-		Map<Class, SemanticType> semanticTypes = new HashMap<Class, SemanticType>();
+		Map<Class<? extends SerializationFormat>, SerializationFormat> formats = new HashMap<Class<? extends SerializationFormat>, SerializationFormat>();
+		Map<Class<? extends SemanticType>, SemanticType> semanticTypes = new HashMap<Class<? extends SemanticType>, SemanticType>();
 		
 		List<JSObject> readers = new ArrayList<JSObject>();
 		for (String name : Babel.s_readers.keySet()) {
@@ -68,7 +70,7 @@ public class ConfigServlet extends HttpServlet {
 		config.put("writers", writers);
 		
 		JSObject formatsO = new JSObject();
-		for (Class c : formats.keySet()) {
+		for (Class<? extends SerializationFormat> c : formats.keySet()) {
 			SerializationFormat format = formats.get(c);
 			
 			JSObject formatO = new JSObject();
@@ -81,7 +83,7 @@ public class ConfigServlet extends HttpServlet {
 		config.put("formats", formatsO);
 		
 		JSObject semanticTypesO = new JSObject();
-		for (Class c : semanticTypes.keySet()) {
+		for (Class<? extends SemanticType> c : semanticTypes.keySet()) {
 			SemanticType semanticType = semanticTypes.get(c);
 			
 			JSObject semanticTypeO = new JSObject();
