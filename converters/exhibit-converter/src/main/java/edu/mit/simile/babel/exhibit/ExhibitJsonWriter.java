@@ -224,7 +224,7 @@ public class ExhibitJsonWriter implements BabelWriter {
 		result.put("items", items);
 		
 		/*
-		 * 	Process properties
+		 * 	Process types
 		 */
 		JSObject typesO = new JSObject();
 		for (String id : m_typeAbbr.m_idToResource.keySet()) {
@@ -244,7 +244,7 @@ public class ExhibitJsonWriter implements BabelWriter {
 		result.put("types", typesO);
 		
 		/*
-		 * 	Process types
+		 * 	Process properties
 		 */
 		JSObject propertiesO = new JSObject();
 		for (String id : m_propertyAbbr.m_idToResource.keySet()) {
@@ -253,7 +253,8 @@ public class ExhibitJsonWriter implements BabelWriter {
 			
 			Property property = m_properties.get(id);
 			
-			int threshold = property.m_total * 3 / 4; 
+			double threshold = property.m_total * 3.0 / 4;
+			
 			if (property.m_items >= threshold) {
 				propertyO.put("valueType", "item");
 			} else if (property.m_numbers >= threshold) {
@@ -301,8 +302,13 @@ public class ExhibitJsonWriter implements BabelWriter {
 	protected String predicateToID(URI predicate, SailConnection connection) {
 		if (predicate.equals(RDF.TYPE) || predicate.equals(RDFS.LABEL)) {
 			return null;
+		} else if (predicate.equals(ExhibitOntology.ID)) {
+			return "id";
+		} else if (predicate.equals(ExhibitOntology.ORIGIN)) {
+			return "origin";
+		} else {
+			return m_propertyAbbr.abbreviateResource(predicate, connection);
 		}
-		return m_propertyAbbr.abbreviateResource(predicate, connection);
 	}
 	
 	protected String guessLabel(Resource resource, SailConnection connection) {
@@ -345,7 +351,9 @@ public class ExhibitJsonWriter implements BabelWriter {
 						datatype.equals(XMLSchema.DATETIME)) {
 						
 						property.m_dates++;
-					} else if (datatype.equals(XMLSchema.INTEGER) ||
+					} else if (
+							datatype.equals(XMLSchema.LONG) ||
+							datatype.equals(XMLSchema.INTEGER) ||
 							datatype.equals(XMLSchema.NEGATIVE_INTEGER) ||
 							datatype.equals(XMLSchema.NON_NEGATIVE_INTEGER) ||
 							datatype.equals(XMLSchema.NON_POSITIVE_INTEGER) ||
@@ -353,7 +361,7 @@ public class ExhibitJsonWriter implements BabelWriter {
 							datatype.equals(XMLSchema.INT)) {
 						property.m_numbers++;
 						
-						putJSObjectProperty(o, propertyID, new Integer(objectString));
+						putJSObjectProperty(o, propertyID, new Long(objectString));
 						break done;
 					} else if (datatype.equals(XMLSchema.DECIMAL) || 
 						datatype.equals(XMLSchema.FLOAT) ||
@@ -397,10 +405,10 @@ public class ExhibitJsonWriter implements BabelWriter {
 				o.put(name, l);
 			}
 		} else if (values != value) {
-			if (value instanceof Integer) {
-				Set<Integer> l = new TreeSet<Integer>();
-				l.add((Integer) values);
-				l.add((Integer) value);
+			if (value instanceof Long) {
+				Set<Long> l = new TreeSet<Long>();
+				l.add((Long) values);
+				l.add((Long) value);
 				o.put(name, l);	
 			} else if (value instanceof Double) {
 				Set<Double> l = new TreeSet<Double>();
