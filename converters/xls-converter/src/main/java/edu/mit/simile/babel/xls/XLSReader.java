@@ -15,6 +15,7 @@ import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -277,30 +278,36 @@ public class XLSReader implements BabelReader {
 									continue;
 								}
 								
-								try {
-									boolean b = cell.getBooleanCellValue();
-				        			addStatement(c, item.m_uri, column.m_uri, new Boolean(b), column.m_valueType, idToItem, namespace);
-				        			continue;
-								} catch (Exception e) {
-								}
-
-								try {
-									double d = cell.getNumericCellValue();
-									
-				        			addStatement(c, item.m_uri, column.m_uri, 
-				        					(Double.compare(d, Math.floor(d)) != 0) ? Double.toString(d) : Long.toString(Math.round(d)), 
-				        					column.m_valueType, idToItem, namespace);
-				        			continue;
-								} catch (Exception e) {
+								if (cellType == HSSFCell.CELL_TYPE_BOOLEAN) {
+									try {
+											boolean b = cell.getBooleanCellValue();
+						        			addStatement(c, item.m_uri, column.m_uri, new Boolean(b), column.m_valueType, idToItem, namespace);
+						        			continue;
+									} catch (Exception e) {
+									}
 								}
 								
-								try {
-									Date d = cell.getDateCellValue();
-				        			addStatement(c, item.m_uri, column.m_uri, d, column.m_valueType, idToItem, namespace);
-				        			continue;
-								} catch (Exception e) {
+								if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
+									if (HSSFDateUtil.isCellDateFormatted(cell)) {
+										try {
+											Date d = cell.getDateCellValue();
+						        			addStatement(c, item.m_uri, column.m_uri, d, column.m_valueType, idToItem, namespace);
+						        			continue;
+										} catch (Exception e) {
+										}
+									}
+									
+									try {
+										double d = cell.getNumericCellValue();
+										boolean isDouble = (Double.compare(d, Math.floor(d)) != 0);
+										Object object = isDouble ? ((Object) new Double(d)) : ((Object) new Long((long) d));
+										
+					        			addStatement(c, item.m_uri, column.m_uri, object, column.m_valueType, idToItem, namespace);
+					        			continue;
+									} catch (Exception e) {
+									}
 								}
-
+								
 								String s = cell.getStringCellValue().trim();
 								if (s.length() > 0) {
 					        		if (column.m_singleValue) {
@@ -369,7 +376,9 @@ public class XLSReader implements BabelReader {
 				v = new URIImpl(namespace + encode(object.toString()));
 			}
 		} else {
-			if (object instanceof Double) {
+			if (object instanceof Long) {
+				v = new LiteralImpl(object.toString(), XMLSchema.LONG);
+			} else if (object instanceof Double) {
 				v = new LiteralImpl(object.toString(), XMLSchema.DOUBLE);
 			} else if (object instanceof Boolean) {
 				v = new LiteralImpl(((Boolean) object).booleanValue() ? "true" : "false", XMLSchema.BOOLEAN);
