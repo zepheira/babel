@@ -186,7 +186,7 @@ public final class BibtexReader implements BabelReader {
 					 */
 					Iterator predicates = rec.keySet().iterator();			
 					while (predicates.hasNext()) {
-						String p = URLEncoder.encode((String) predicates.next(), "UTF-8");
+						String p = (String) predicates.next();
 						String v = (String) rec.get(p);
 						
 						if (v == null) {
@@ -194,6 +194,13 @@ public final class BibtexReader implements BabelReader {
 						} else {
 							v = unescapeUnicode(v).replaceAll("\\s+", " ");;
 						}
+						
+						boolean isMultiple = false;
+						if (p.endsWith(":multiple")) {
+							isMultiple = true;
+							p = p.substring(0, p.length() - ":multiple".length());
+						}
+						p = URLEncoder.encode(p, "UTF-8");
 						
 						URIImpl predicate = new URIImpl(s_namespace + p);
 						
@@ -241,6 +248,16 @@ public final class BibtexReader implements BabelReader {
 									new URIImpl(RDF.NAMESPACE + "_" + (++count)), 
 									new URIImpl(ourNamespace + s_codec.encode(s, s_urlEncoding))
 								);
+							}
+						} else if (isMultiple) {
+							String[] values = StringUtils.splitByWholeSeparator(v, ";");
+							for (String v2 : values) {
+								v2 = v2.trim();
+								Value value = (p.equals("crossref") && keymap.containsKey(v2))
+									? (Value) new URIImpl(((BibMap) keymap.get(v2)).getURI())
+									: (Value) new LiteralImpl(unescapeBibtexSpecialCharacters(v2));
+								
+								c.addStatement(record, predicate, value);	
 							}
 						} else {
 							Value value = (p.equals("crossref") && keymap.containsKey(v))
