@@ -3,12 +3,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
         <title>Simile | Babel | Preview in Exhibit</title>
-        <script src="http://static.simile.mit.edu/exhibit/api/exhibit-api.js" type="text/javascript"></script>
+        <script src="http://static.simile.mit.edu/exhibit/api-2.0/exhibit-api.js?autoCreate=false" type="text/javascript"></script>
         <script type="text/javascript">
             var exhibit;
-
         
-
             function getForm() {
                 return document.getElementById("data-form");
             }
@@ -17,63 +15,18 @@
             }
             function onLoad() {
                 var data = eval("(" + getTextarea().value + ")");
-                var properties = [ ".type" ];
+                
+                window.database = Exhibit.Database.create();
+                window.database.loadData(data);
+                
+                var facets = [ "<div ex:role='facet' ex:expression='.type'></div>" ];
                 for (var p in data.properties) {
-                    properties.push("." + p);
+                    facets.push("<div ex:role='facet' ex:expression='." + p + "'></div>");
                 }
-
-                var configuration = {
-                    BrowseEngine: {
-
-                        facets: properties
-
-                    },
-
-                    ViewPanel: {
-
-                        views: [
-
-                            {   viewClass: Exhibit.TileView,
-
-                                label: "Details",
-
-                                configuration: {
-
-                                    orders: [
-
-                                        ".type"
-
-                                    ],
-
-                                    possibleOrders: properties
-
-                                }
-
-                            }
-
-                        ]
-
-                    }
-
-                };
-
-                    
-
-                exhibit = Exhibit.createAdvanced(configuration);
-
-                exhibit.loadData(data);
+                document.getElementById("facets").innerHTML = facets.join("");
                 
-                var types = new Exhibit.Set();
-                for (t in data.types) {
-                    types.add(t);
-                }
-                
-
-                exhibit.getBrowseEngine().setRootCollection(
-
-                    exhibit.getDatabase().getSubjectsUnion(types, "type")
-
-                );
+                window.exhibit = Exhibit.create();
+                window.exhibit.configureFromDOM();
                 
                 document.getElementById("close-button").onclick = function(evt) {
                     evt = (evt) ? evt : event;
@@ -83,7 +36,6 @@
                     evt.stopPropagation();
                     return false;
                 };
-
             }
             function copyRawData() {
                 getForm().style.display = "block";
@@ -98,18 +50,6 @@
 
         </script>
         <style>
-            div.publication {
-                padding:        0.5em;
-                border:         1px solid #ccc; 
-                margin-bottom:  1em;
-            }
-            div.title {
-                font-weight: bold;  
-            }
-            div.authors {
-                font-style: italic;
-            }
-            
             #view-panel h1 {
                 font-size:      120%;
                 background:     none;
@@ -150,23 +90,13 @@
                 <button onclick="downloadRawData();">Download Raw Data</button>
             </div>
             <table width="100%">
-
                 <tr valign="top">
-
                     <td>
-
-                        <div id="exhibit-control-panel"></div>
-
-                        <div id="exhibit-view-panel"></div>
-
+                        <div ex:role="view" ex:grouped="false"></div>
                     </td>
-
                     <td width="30%">
-
-                        <div id="exhibit-browse-panel"></div>
-
+                        <div id="facets"></div>
                     </td>
-
                 </tr>
 
             </table>
