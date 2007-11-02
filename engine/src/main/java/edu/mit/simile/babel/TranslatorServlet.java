@@ -264,7 +264,7 @@ public class TranslatorServlet extends HttpServlet {
 	) throws Exception {
 		MultipartParser parser = null;
 		try {
-			parser = new MultipartParser(request, 5 * 1024 * 1024);
+			parser = new MultipartParser(request, 20 * 1024 * 1024);
 		} catch (Exception e) {
 			// silent
 		}
