@@ -112,13 +112,15 @@ public class ExhibitJsonLoadingUtil {
         Map<String, Resource> propertyIDToResource = new HashMap<String, Resource>();
         
         String baseURL = _getBaseURL(urlSpec);
-        Literal origin = new LiteralImpl(urlSpec);
+        Literal origin = (urlSpec == null || urlSpec.length() == 0) ? null : new LiteralImpl(urlSpec);
         
         SailConnection metaConnection = metaSail.getConnection();
         try {
             for (String typeID : types.keySet()) {
                 Resource typeResource = _processType(typeID, types.get(typeID), baseURL, metaConnection);
-                metaConnection.addStatement(typeResource, ExhibitOntology.ORIGIN, origin);
+                if (origin != null) {
+                    metaConnection.addStatement(typeResource, ExhibitOntology.ORIGIN, origin);
+                }
                 
                 typeIDToResource.put(typeID, typeResource);
             }
@@ -130,8 +132,10 @@ public class ExhibitJsonLoadingUtil {
             		!propertyID.equals("id")) {
             		
 	                Resource propertyResource = _processProperty(propertyID, properties.get(propertyID), baseURL, metaConnection);
-	                metaConnection.addStatement(propertyResource, ExhibitOntology.ORIGIN, origin);
-	                
+                    if (origin != null) {
+                        metaConnection.addStatement(propertyResource, ExhibitOntology.ORIGIN, origin);
+                    }
+                    
 	                propertyIDToResource.put(propertyID, propertyResource);
             	}
             }
@@ -156,7 +160,9 @@ public class ExhibitJsonLoadingUtil {
             try {
                 for (NativeObject itemNO : items) {
                     Resource itemResource = _processItem(itemNO, baseURL, dataConnection, metaConnection, itemIDToURI);
-                    dataConnection.addStatement(itemResource, ExhibitOntology.ORIGIN, origin);
+                    if (origin != null) {
+                        dataConnection.addStatement(itemResource, ExhibitOntology.ORIGIN, origin);
+                    }
                 }
                 
                 dataConnection.commit();
@@ -401,6 +407,10 @@ public class ExhibitJsonLoadingUtil {
 
 
     static protected String _getBaseURL(String url) {
+        if (url == null || url.length() == 0) { 
+            return "http://127.0.0.1/";
+        }
+        
         int pound = url.indexOf('#');
         if (pound > 0) {
             return url.substring(0, pound + 1);

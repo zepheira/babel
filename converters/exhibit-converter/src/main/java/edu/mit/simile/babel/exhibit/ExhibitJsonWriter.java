@@ -166,7 +166,6 @@ public class ExhibitJsonWriter implements BabelWriter {
 				if (id == null) {
 					id = m_itemAbbr.abbreviateResource(subject, label);
 				}
-					
 				JSObject itemO = new JSObject();
 				
 				/*
@@ -229,8 +228,11 @@ public class ExhibitJsonWriter implements BabelWriter {
 		JSObject typesO = new JSObject();
 		for (String id : m_typeAbbr.m_idToResource.keySet()) {
 			JSObject typeO = new JSObject();
-			typeO.put("uri", m_typeAbbr.m_idToResource.get(id));
-			
+            String uri = m_typeAbbr.m_idToResource.get(id);
+            if (uri != null && !uri.startsWith("http://127.0.0.1/")) {
+                typeO.put("uri", uri);
+            }
+            
 			Type type = m_types.get(id);
 			if (type.m_label != null) {
 				typeO.put("label", type.m_label);
@@ -239,18 +241,25 @@ public class ExhibitJsonWriter implements BabelWriter {
 				typeO.put("pluralLabel", type.m_pluralLabel);
 			}
 			
-			typesO.put(id, typeO);
+            if (!typeO.isEmpty()) {
+                typesO.put(id, typeO);
+            }
 		}
-		result.put("types", typesO);
-		
+        if (!typesO.isEmpty()) {
+            result.put("types", typesO);
+        }
+        
 		/*
 		 * 	Process properties
 		 */
 		JSObject propertiesO = new JSObject();
 		for (String id : m_propertyAbbr.m_idToResource.keySet()) {
 			JSObject propertyO = new JSObject();
-			propertyO.put("uri", m_propertyAbbr.m_idToResource.get(id));
-			
+            String uri = m_propertyAbbr.m_idToResource.get(id);
+            if (uri != null && !uri.startsWith("http://127.0.0.1/")) {
+                propertyO.put("uri", uri);
+            }
+            
 			Property property = m_properties.get(id);
 			
 			double threshold = property.m_total * 3.0 / 4;
@@ -286,10 +295,13 @@ public class ExhibitJsonWriter implements BabelWriter {
 				propertyO.put("reverseGroupingLabel", property.m_reverseGroupingLabel);
 			}
 			
-			propertiesO.put(id, propertyO);
+            if (!propertyO.isEmpty()) {
+                propertiesO.put(id, propertyO);
+            }
 		}
-		result.put("properties", propertiesO);
-		
+        if (!propertiesO.isEmpty()) {
+            result.put("properties", propertiesO);
+        }
 	}
 	
 	protected String typeToID(Resource type, SailConnection connection) {
@@ -300,10 +312,8 @@ public class ExhibitJsonWriter implements BabelWriter {
 	}
 	
 	protected String predicateToID(URI predicate, SailConnection connection) {
-		if (predicate.equals(RDF.TYPE) || predicate.equals(RDFS.LABEL)) {
+		if (predicate.equals(RDF.TYPE) || predicate.equals(RDFS.LABEL) || predicate.equals(ExhibitOntology.ID)) {
 			return null;
-		} else if (predicate.equals(ExhibitOntology.ID)) {
-			return "id";
 		} else if (predicate.equals(ExhibitOntology.ORIGIN)) {
 			return "origin";
 		} else {
