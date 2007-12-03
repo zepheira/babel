@@ -65,11 +65,12 @@ public final class BibtexReader implements BabelReader {
 	final static private Logger s_logger = Logger.getLogger(BibtexReader.class);
 	
 	final static private String s_namespace = "http://simile.mit.edu/2006/11/bibtex#";
+    final static private URI    s_dc_date = new URIImpl("http://purl.org/dc/elements/1.1/date");
 	static private long 		s_idGenerator = 0;
 	
     final static String s_urlEncoding = "UTF-8";
     final static URLCodec s_codec = new URLCodec();
-
+    
 	/* (non-Javadoc)
 	 * @see edu.mit.simile.babel.BabelReader#getLabel(java.util.Locale)
 	 */
@@ -180,10 +181,10 @@ public final class BibtexReader implements BabelReader {
 				c.addStatement(record, keyPredicate, new LiteralImpl(key));
 				c.addStatement(record, publicationTypePredicate, new LiteralImpl(rec.getType()));
 				
+                /*
+                 * Assert the remaining properties of the record
+                 */
 				try {
-					/*
-					 * Assert the remaining properties of the record
-					 */
 					Iterator predicates = rec.keySet().iterator();			
 					while (predicates.hasNext()) {
 						String p = (String) predicates.next();
@@ -270,6 +271,15 @@ public final class BibtexReader implements BabelReader {
 				} catch (UnsupportedEncodingException e) {
 					// won't happen, but quiets the compiler
 				}
+                
+                /*
+                 * Asserts computed properties
+                 */
+                String year = (String) rec.get("year");
+                if (year != null) {
+                    c.addStatement(record, s_dc_date, 
+                        new LiteralImpl(combineYearAndMonth(year, (String) rec.get("month"))));   
+                }
 			}
 			
 			URIImpl lastNamePredicate = new URIImpl(s_namespace + "last-name");
@@ -572,5 +582,33 @@ public final class BibtexReader implements BabelReader {
 		{	"AE",	"\u00c6" },
 		{	"OE",	"\u0152" },
 	};
+    
+    final static Map<String, String> s_monthMap = new HashMap<String, String>();
+    
+    static {
+        s_monthMap.put("jan", "01");
+        s_monthMap.put("feb", "02");
+        s_monthMap.put("mar", "03");
+        s_monthMap.put("apr", "04");
+        s_monthMap.put("may", "05");
+        s_monthMap.put("jun", "06");
+        s_monthMap.put("jul", "07");
+        s_monthMap.put("aug", "08");
+        s_monthMap.put("sep", "09");
+        s_monthMap.put("oct", "10");
+        s_monthMap.put("nov", "11");
+        s_monthMap.put("dec", "12");
+    }
+
+    static private String combineYearAndMonth(String year, String month) {
+        if (month != null) {
+            month = s_monthMap.get(month.substring(0, Math.min(3, month.length())).toLowerCase());
+        }
+        if (month != null) {
+            return year + "-" + month;
+        } else {
+            return year;
+        }
+    }
 }
 
