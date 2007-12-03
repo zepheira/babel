@@ -124,7 +124,9 @@
                 <tr valign="top">
                     <td>
                         <div ex:role="lens" ex:itemTypes="Publication" class="publication-lens" style="display: none;">
-                            <div class="title"><span ex:content=".label"></span></div>
+                            <div class="title"><span ex:content=".label"></span><span ex:if-exists=".date">, 
+                                <span ex:if-exists=".month" ex:content=".month" class="month"></span> <span ex:content=".year" class="year"></span>
+                            </span></div>
                             
                             <div class="authors"><span ex:content=".author"></span></div>
                             <p ex:content=".abstract"></p>
@@ -135,16 +137,17 @@
                             
                             <ol class="publications" ex:content="!author">
                                 <li><span ex:content=".label" class="publication-title"></span> by
-                                    <span ex:content=".author" class="authors"></span>
-                                    <span ex:if-exists=".year">, <span ex:content=".year" class="year"></span></span>
+                                    <span ex:content=".author" class="authors"></span><span ex:if-exists=".date">, 
+                                        <span ex:if-exists=".month" ex:content=".month" class="month"></span> <span ex:content=".year" class="year"></span>
+                                    </span>
                                 </li>
                             </ol>
                         </div>
                         <div ex:role="view"
-                            ex:orders=".year"
+                            ex:orders=".date"
                             ex:directions="descending"
                             ex:grouped="false"
-                            ex:possibleOrders=".pub-type, .author, .year, .label"></div>
+                            ex:possibleOrders=".pub-type, .author, .date, .label"></div>
                     </td>
                     <td width="25%">
                         <div ex:role="facet" ex:expression=".pub-type"></div>
