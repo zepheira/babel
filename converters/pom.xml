@@ -23,5 +23,6 @@
     <module>tsv-converter</module>
     <module>bibtex-converter</module>
     <module>xls-converter</module>
+    <module>jpeg-converter</module>
   </modules>
 </project>
