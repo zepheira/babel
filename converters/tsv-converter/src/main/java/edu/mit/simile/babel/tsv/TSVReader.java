@@ -20,6 +20,7 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.RDFS;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
@@ -31,7 +32,6 @@ import edu.mit.simile.babel.SerializationFormat;
 import edu.mit.simile.babel.exhibit.ExhibitOntology;
 
 public class TSVReader implements BabelReader {
-
 	static class Column {
 		String		m_name;
 		URI			m_uri;
@@ -50,6 +50,7 @@ public class TSVReader implements BabelReader {
 		Text,
 		Number,
 		Boolean,
+		Date,
 		URL
 	}
 	
@@ -128,6 +129,8 @@ public class TSVReader implements BabelReader {
 			        				column.m_valueType = ValueType.Number;
 			        			} else if ("boolean".equals(detail)) {
 			        				column.m_valueType = ValueType.Boolean;
+			        			} else if ("date".equals(detail)) {
+			        				column.m_valueType = ValueType.Date;
 			        			} else if ("url".equals(detail)) {
 			        				column.m_valueType = ValueType.URL;
 			        			}
@@ -277,7 +280,35 @@ public class TSVReader implements BabelReader {
 			} else {
 				v = new URIImpl(namespace + encode(object));
 			}
-		} else {
+		} else if (valueType.equals(ValueType.Boolean)) {
+			v = new LiteralImpl(
+				object.equalsIgnoreCase("true") ? "true" : "false",
+				XMLSchema.BOOLEAN
+			);
+		} else if (valueType.equals(ValueType.Number)) {
+			try {
+	    	    Long.parseLong(object);
+				v = new LiteralImpl(object, XMLSchema.LONG);
+				
+	    	} catch (NumberFormatException nfe) {
+	    		try {
+		    	    Double.parseDouble(object);
+					v = new LiteralImpl(object, XMLSchema.DOUBLE);
+					
+		    	} catch (NumberFormatException nfe2) {
+	    		}
+	    	}
+		} else if (valueType.equals(ValueType.Date)) {
+			/**
+			 * TODO: How do we convert an arbitrary string to an ISO8601 date/time?
+			 */
+			v = new LiteralImpl(
+				object,
+				XMLSchema.DATETIME
+			);
+		}
+		
+		if (v == null) {
 			v = new LiteralImpl(object);
 		}
 		connection.addStatement(subject, predicate, v);

@@ -38,6 +38,7 @@ import edu.mit.simile.babel.util.JSObject;
 import edu.mit.simile.babel.util.Util;
 
 public class ExhibitJsonWriter implements BabelWriter {
+
 	protected Abbreviation m_typeAbbr = new Abbreviation(false);
 	protected Abbreviation m_propertyAbbr = new Abbreviation(true);
 	protected Abbreviation m_itemAbbr = new Abbreviation(false);
@@ -93,6 +94,7 @@ public class ExhibitJsonWriter implements BabelWriter {
 	
 	protected void internalWrite(SailConnection connection, JSObject result, Locale locale) throws SailException {
 		List<JSObject> items = new ArrayList<JSObject>();
+		Map<Resource, URI> itemToType = new HashMap<Resource, URI>();
 		
         /*
          *  Try to abbreviate items
@@ -108,6 +110,7 @@ public class ExhibitJsonWriter implements BabelWriter {
                 }
                 
                 Resource subject = statement.getSubject();
+                itemToType.put(subject, (URI) statement.getObject());
                 
                 /*
                  *  The other properties
@@ -120,15 +123,16 @@ public class ExhibitJsonWriter implements BabelWriter {
                         URI predicate = propertyStatement.getPredicate();
                         Value object = propertyStatement.getObject();
                         
-                        String propertyID = predicateToID(predicate, connection);
-                        if ("id".equalsIgnoreCase(propertyID)) {
-                            m_itemAbbr.forceAbbreviation(subject, object.toString());
+                        if (predicate.equals(ExhibitOntology.ID)) {
+                            m_itemAbbr.forceAbbreviation(subject, valueToString(object));
+                        } else {
+                        	// abbreviate the predicate
+                        	predicateToID(predicate, connection);
                         }
                     }
                 } finally {
                     propertyStatements.close();
                 }
-                    
             }
         } finally {
             statements.close();
@@ -137,88 +141,74 @@ public class ExhibitJsonWriter implements BabelWriter {
 		/*
 		 * 	Process items
 		 */
-		statements =
-			connection.getStatements(null, RDF.TYPE, null, true);
-		try {
-			while (statements.hasNext()) {
-				Statement statement = statements.next();
-                Value typeV = statement.getObject();
-                if (RDF.SEQ.equals(typeV)) {
-                    continue;
-                }
-                
-				Resource subject = statement.getSubject();
-				
-				URI type = (URI) statement.getObject();
-				String typeID = typeToID(type, connection);
-				if (typeID == null) {
-					continue;
-				} else {
-					Type t = m_types.get(typeID);
-					if (t == null) {
-						t = new Type();
-						m_types.put(typeID, t);
-					}
+        for (Resource subject : itemToType.keySet()) {
+			URI type = itemToType.get(subject);
+			String typeID = typeToID(type, connection);
+			if (typeID == null) {
+				continue;
+			} else {
+				Type t = m_types.get(typeID);
+				if (t == null) {
+					t = new Type();
+					m_types.put(typeID, t);
 				}
-				
-				String id = m_itemAbbr.resourceToID(subject);
-				String label = guessLabel(subject, connection);
-				if (id == null) {
-					id = m_itemAbbr.abbreviateResource(subject, label);
-				}
-				JSObject itemO = new JSObject();
-				
-				/*
-				 *  The must-have properties
-				 */
-				itemO.put("type", typeID);
-				itemO.put("label", label);
-				if (!label.equals(id)) {
-					itemO.put("id", id);
-				}
-				if (subject instanceof URI && !((URI) subject).getNamespace().startsWith("http://127.0.0.1/")) {
-					itemO.put("uri", ((URI) subject).toString());
-				}
-				
-				/*
-				 *  The other properties
-				 */
-				CloseableIteration<? extends Statement, SailException> propertyStatements =
-					connection.getStatements(subject, null, null, true);
-				try {
-					while (propertyStatements.hasNext()) {
-						Statement propertyStatement = propertyStatements.next();
-						URI predicate = propertyStatement.getPredicate();
-						Value object = propertyStatement.getObject();
-						
-						String propertyID = predicateToID(predicate, connection);
-						if (propertyID != null) {
-							if (object instanceof Resource && 
-								RDF.SEQ.equals(extract((Resource) object, RDF.TYPE, null, connection))) {
+			}
+			
+			String id = m_itemAbbr.resourceToID(subject);
+			String label = guessLabel(subject, connection);
+			if (id == null) {
+				id = m_itemAbbr.abbreviateResource(subject, label);
+			}
+			JSObject itemO = new JSObject();
+			
+			/*
+			 *  The must-have properties
+			 */
+			itemO.put("type", typeID);
+			itemO.put("label", label);
+			if (!label.equals(id)) {
+				itemO.put("id", id);
+			}
+			if (subject instanceof URI && !((URI) subject).getNamespace().startsWith("http://127.0.0.1/")) {
+				itemO.put("uri", ((URI) subject).toString());
+			}
+			
+			/*
+			 *  The other properties
+			 */
+			CloseableIteration<? extends Statement, SailException> propertyStatements =
+				connection.getStatements(subject, null, null, true);
+			try {
+				while (propertyStatements.hasNext()) {
+					Statement propertyStatement = propertyStatements.next();
+					URI predicate = propertyStatement.getPredicate();
+					Value object = propertyStatement.getObject();
+					
+					String propertyID = predicateToID(predicate, connection);
+					if (propertyID != null) {
+						if (object instanceof Resource && 
+							RDF.SEQ.equals(extract((Resource) object, RDF.TYPE, null, connection))) {
+							
+							int x = 1;
+							Value v;
+							while ((v = extract(
+											(Resource) object, 
+											new URIImpl(RDF.NAMESPACE + "_" + x++), 
+											null, 
+											connection)) != null) {
 								
-								int x = 1;
-								Value v;
-								while ((v = extract(
-												(Resource) object, 
-												new URIImpl(RDF.NAMESPACE + "_" + x++), 
-												null, 
-												connection)) != null) {
-									
-									putJSObjectProperty(itemO, propertyID, v, connection);
-								}
-							} else {
-								putJSObjectProperty(itemO, propertyID, object, connection);
+								putJSObjectProperty(itemO, propertyID, v, itemToType, connection);
 							}
+						} else {
+							putJSObjectProperty(itemO, propertyID, object, itemToType, connection);
 						}
 					}
-				} finally {
-					propertyStatements.close();
 				}
-				
-				items.add(itemO);
+			} finally {
+				propertyStatements.close();
 			}
-		} finally {
-			statements.close();
+			
+			items.add(itemO);
 		}
 		result.put("items", items);
 		
@@ -304,6 +294,11 @@ public class ExhibitJsonWriter implements BabelWriter {
         }
 	}
 	
+	protected String valueToString(Value v) {
+		return (v instanceof Literal) ? ((Literal) v).getLabel() :
+			((Resource) v).toString();
+	}
+	
 	protected String typeToID(Resource type, SailConnection connection) {
 		if (type.equals(RDF.SEQ)) {
 			return null;
@@ -338,11 +333,23 @@ public class ExhibitJsonWriter implements BabelWriter {
 			((BNode) resource).getID();
 	}
 
-	protected void putJSObjectProperty(JSObject o, String propertyID, Value value, SailConnection connection) {
-		String objectString = (value instanceof Resource) ?
-			m_itemAbbr.abbreviateResource((Resource) value, connection) :
-			((Literal) value).getLabel();
-			
+	protected void putJSObjectProperty(JSObject o, String propertyID, Value value, Map<Resource, URI> itemToType, SailConnection connection) {
+		String objectString = null;
+		if (value instanceof Resource) {
+			Resource r = (Resource) value;
+			if (itemToType.containsKey(r)) {
+				objectString = m_itemAbbr.abbreviateResource(r, connection);
+			} else {
+				/*
+				 * Don't try to abbreviate resources not included in this data set.
+				 * Otherwise, full URIs will get abbreviated.
+				 */
+				objectString = r.toString();
+			}
+		} else {
+			objectString = ((Literal) value).getLabel();
+		}
+		
 		Property property = m_properties.get(propertyID);
 		if (property == null) {
 			property = new Property();

@@ -76,8 +76,10 @@ public class JSObject extends Properties {
             writer.print("]");
         } else if (o instanceof JSObject) {
             writeJSObject(writer, (JSObject) o);
-        } else if (o != null) {
+        } else if (o instanceof String) {
         	writer.print("\"" + StringEscapeUtils.escapeJavaScript(o.toString()) + "\"");
+        } else if (o != null) {
+        	writer.print(StringEscapeUtils.escapeJavaScript(o.toString()));
         } else {
         	writer.print("null");
         }
