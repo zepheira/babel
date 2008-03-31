@@ -26,6 +26,7 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.OWL;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.RDFS;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
@@ -329,6 +330,13 @@ public class ExhibitJsonLoadingUtil {
             } catch (Exception e) {
                 object = new URIImpl(baseURL + _encode(id));
             }
+        } else if (valueO instanceof Double) {
+        	double d = ((Double) valueO).doubleValue();
+        	if (d != Math.floor(d)) {
+                object = new LiteralImpl(valueO.toString()/*, XMLSchema.DOUBLE*/);
+        	} else {
+        		object = new LiteralImpl(Long.toString(((Double)valueO).longValue())/*, XMLSchema.LONG*/);
+        	}
         } else {
             object = new LiteralImpl(valueO.toString());
         }
