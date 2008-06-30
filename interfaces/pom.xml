@@ -22,71 +22,71 @@
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-model</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-repository-api</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-sail-api</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-repository-sail</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-sail-memory</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-sail-nativerdf</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		
 		<!-- =============== Sesame2 RIO =============== -->
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-api</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-n3</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-turtle</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-ntriples</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-rdfxml</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrdf</groupId>
 			<artifactId>openrdf-rio-trix</artifactId>
-			<version>2.0-beta6</version>
+			<version>2.0.1</version>
 		</dependency>
 		
 		<!-- =============== Logging =============== -->
 	    <dependency>
 	        <groupId>log4j</groupId>
 	        <artifactId>log4j</artifactId>
-	        <version>1.2.13</version>
+	        <version>1.2.15</version>
 	    </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
