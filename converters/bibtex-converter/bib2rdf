@@ -1,7 +1,3 @@
-#!/bin/tcsh -f
-# get the correct working directory
-set mypath=$0
-if ($mypath == "bib2rdf") set mypath=`which bib2rdf`
-set mypath=$mypath:h
-java -classpath ${mypath}/libraries/fulljena.jar:${mypath}/source edu.mit.csail.haystack.rdf.converters.BibtexParser $*
+#!/bin/sh
+java -classpath target/babel-bibtex-converter-1.0-SNAPSHOT.jar edu.mit.simile.babel.bibtex.internal.BibtexGrammar $*
 
