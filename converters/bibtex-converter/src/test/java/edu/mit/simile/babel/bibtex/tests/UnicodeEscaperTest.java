@@ -17,8 +17,8 @@ public class UnicodeEscaperTest {
     static Logger logger = Logger.getLogger(UnicodeEscaperTest.class);
     
     String[] original = {
-        "Per",
-        "Vigas",
+        "Perù",
+        "Viégas",
     };
     
     String[] converted = {
