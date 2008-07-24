@@ -37,6 +37,8 @@ import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author matsakis
  * @author dfhuynh
@@ -44,6 +46,8 @@ import java.util.regex.Pattern;
  */
 
 final public class BibtexCleanerReader extends FilterReader {
+    
+    static Logger logger = Logger.getLogger(BibtexCleanerReader.class);
     
 	// The two possible states a BibtexCleanerReader can be in
 	private final int REC = 0;
@@ -63,7 +67,7 @@ final public class BibtexCleanerReader extends FilterReader {
 	private final Pattern recpattern = Pattern.compile("@\\p{Blank}*\\p{Alpha}+\\p{Blank}*[({]");
 	
 	
-	public BibtexCleanerReader(Reader in){
+	public BibtexCleanerReader(Reader in) {
 		super(in);
 		this.in = new BufferedReader(in);
 		inIsEmpty = done = false;
@@ -72,7 +76,7 @@ final public class BibtexCleanerReader extends FilterReader {
 	// Methods that respect the public interface of a Reader, with a little
 	// glue that supports the implementation of this class
 
-	public void reset() throws IOException{
+	public void reset() throws IOException {
 		inIsEmpty = done = false;
 		state = CRUD;
 		bracecount = 0;
@@ -80,31 +84,33 @@ final public class BibtexCleanerReader extends FilterReader {
 		super.reset();
 	}
 
-	public void close() throws IOException{
+	public void close() throws IOException {
 		inIsEmpty = done = true;
 		super.close();
 	}
 
-	public boolean ready() throws IOException{
+	public boolean ready() throws IOException {
 		return in.ready() || buffer.length() > 0;
 	}
 	
-	public boolean markSupport() {return false;}
+	public boolean markSupport() {
+	    return false;
+	}
 
-	public void mark(int readAheadLimit){
+	public void mark(int readAheadLimit) {
 	    throw new RuntimeException("mark() unsupported on BibtexCleanerReader");
 	}
 	
 	public long skip(long n) throws IOException {
 		int count = 0;
-		while(count < n && !done){
+		while (count < n && !done) {
 			read();
 			count++;
 		}
 		return count;
 	}
 
-	public int read(char[] cbuf) throws IOException{
+	public int read(char[] cbuf) throws IOException {
 		return read(cbuf, 0, cbuf.length);
 	}
 
@@ -160,7 +166,7 @@ final public class BibtexCleanerReader extends FilterReader {
 	// contain the beginning of a record, removes everything.  Otherwise,
 	// strips the stuff before the record, appends the beginning of the 
 	// record to the buffer, and then enters record mode
-	private void crud(StringBuffer line){
+	private void crud(StringBuffer line) {
 		Matcher match = recpattern.matcher(line);
 		if (match.find()) {
 			String recstart = match.group();
@@ -181,7 +187,7 @@ final public class BibtexCleanerReader extends FilterReader {
 	// afterwards,strips the stuff after the record, appends the beginning
 	// of the record to the buffer, and then enters record mode
 	
-	private void rec(StringBuffer line){
+	private void rec(StringBuffer line) {
 		boolean closed = false;
 		int i = 0;
 		while (!closed && i<line.length()) {

@@ -61,7 +61,6 @@ import org.openrdf.sail.SailException;
 import edu.mit.simile.babel.BabelReader;
 import edu.mit.simile.babel.SemanticType;
 import edu.mit.simile.babel.SerializationFormat;
-import edu.mit.simile.babel.bibtex.internal.BibtexGrammar;
 import edu.mit.simile.babel.util.ListMap;
 
 /**

@@ -36,12 +36,9 @@ options {
    STATIC=false;
 }
 
-// NOTE(NM): For handling unicode, see http://www.xrce.xerox.com/competencies/content-analysis/tools/publis/javacc_unicode.pdf
-// Those tips don't seem to work, though.
-
 PARSER_BEGIN(BibtexGrammar)
 
-package edu.mit.simile.babel.bibtex.internal;
+package edu.mit.simile.babel.bibtex;
 
 import java.io.*;
 import java.util.*;
@@ -149,7 +146,7 @@ TOKEN:{
       | < RBRACE: "}" >
       | < DELIM: "{" | "}" | "(" | ")" | "\"" >
       | < QCHAR: "\\" <DELIM> | "\\%" >   // also a word
-      | < WORD: (["A"-"z","%","*","+","-"-"<",">","|", "?","&","!","$","~","'"])+ >
+      | < WORD: (["A"-"z","%","*","+","-"-"<",">","|","?","&","!","$","~","'"])+ >
 }
 
 /** 
@@ -226,14 +223,14 @@ void recdef():
 }
 {
     <AT> (t1 = <WORD>) [<WS>] (
-        (<LBRACE> [<WS>] (t2=<WORD>) (<COMMA> pair(record))* [<COMMA>][<WS>] <RBRACE>)
-      | (<LPAREN> [<WS>] (t2=<WORD>) (<COMMA> pair(record))* [<COMMA>][<WS>] <RPAREN>)
+        (<LBRACE> [<WS>] [(t2=<WORD>) <COMMA>] (pair(record))* [<WS>] <RBRACE>)
+      | (<LPAREN> [<WS>] [(t2=<WORD>) <COMMA>] (pair(record))* [<WS>] <RPAREN>)
     )
     {
-        String type = t1.toString().toLowerCase();
-        String key = t2.toString();
-        record.setType(type.equals("conference") ? "inproceedings" : type);
-        record.setKey(key);
+        record.setType(t1.toString().toLowerCase());
+        if (t2 != null) {
+            record.setKey(t2.toString());
+        }
         records.add(record);
     }
 }
@@ -247,10 +244,10 @@ void pair(Map map):
     String val;
 }
 {
-    [<WS>] (id=<WORD>) 
-    [<WS>] <EQ>
-    [<WS>] (val = vals()) 
-    { map.put(id.toString().toLowerCase(), val); }
+    [<WS>] (id=<WORD>) [<WS>] <EQ> [<WS>] (val = vals()) [<WS>] [<COMMA>]
+    { 
+        map.put(id.toString().toLowerCase(), val); 
+    }
 }
 
 /** 
@@ -272,7 +269,6 @@ String vals():
                 val = val.substring(1, val.length()-1);
             }
             sb.append(val + "}");
-            //  sb.append(" " + val + "}");
         }
     )*  
     { return sb.toString(); }
@@ -288,7 +284,7 @@ String val():
 }
 {
     <LBRACE> (val = wordsq()) <RBRACE> { return "{" + val + "}"; }
-    | <QUOTE>  (val = words()) <QUOTE> { return "{" + val + "}"; }
+    | <QUOTE> (val = words()) <QUOTE> { return "{" + val + "}"; }
     | (token = <WORD>) 
     {
         String key = token.toString().toLowerCase();
