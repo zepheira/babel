@@ -27,9 +27,22 @@ public class BibtexParserTest {
         "zotero.bib",
         "main.bib",
         "karger.bib",
-       "demaine.bib",
+        "demaine.bib",
         "endnote.bib",
         "edge_cases.bib"
+    };
+    
+    int[] records = {
+        0,
+        1,
+        7,
+        2,
+        168,
+        36,
+        907,
+        317,
+        10,
+        5
     };
 
     @Test public void testCleaner() throws Exception {
@@ -49,7 +62,7 @@ public class BibtexParserTest {
                 StringWriter w = new StringWriter();
                 IOUtils.copy(r, w);
                 w.close();
-                logger.info(w.toString());
+                //logger.info(w.toString());
                 counter++;
             } catch (Exception e) {
                 logger.error(e);
@@ -78,9 +91,13 @@ public class BibtexParserTest {
                     )
                 );
                 p.parse();
-                p.printout();
-                counter++;
-            } catch (Exception e) {
+                //p.printout();
+
+                int rec = p.getRecords().size();
+                logger.info("Found " + rec + " records");
+                if (rec == records[i]) counter++;
+            } catch (Throwable e) {
+                e.printStackTrace();
                 logger.error(e);
                 stream.close();
             }

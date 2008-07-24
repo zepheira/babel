@@ -146,6 +146,10 @@ public final class BibtexReader implements BabelReader {
 			for (BibMap rec : records) {
 				String URI = rec.getURI();
 				String key = rec.getKey();
+				if (key == null) {
+				    key = URI;
+				    s_logger.warn("key is null, using URI as key: " + key);
+				}
 				
 				if (processedKeys.count(key) > 0) {
 					s_logger.warn(processedKeys.check(key, URI) ?
@@ -232,6 +236,13 @@ public final class BibtexReader implements BabelReader {
 									new URIImpl(ourNamespace + s_codec.encode(s, s_urlEncoding))
 								);
 							}
+						} else if ("keywords".equals(p) || "tags".equals(p)) {
+						    String[] tags = StringUtils.splitByWholeSeparator(v, ",");
+						    for (String tag : tags) {
+                                tag = tag.trim();
+                                Value value = (Value) new LiteralImpl(BibtexUtils.unescapeBibtexSpecialCharacters(tag));
+                                c.addStatement(record, predicate, value);   
+						    }
 						} else if (isMultiple) {
 							String[] values = StringUtils.splitByWholeSeparator(v, ";");
 							for (String v2 : values) {
@@ -283,7 +294,7 @@ public final class BibtexReader implements BabelReader {
 			c.close();
 		}
 	}
-	
+		
 	private void preprocess(List<BibMap> records, ListMap keymap) {
 		/*
 		 * fill a map of keys to records, normalizing strings at the same time

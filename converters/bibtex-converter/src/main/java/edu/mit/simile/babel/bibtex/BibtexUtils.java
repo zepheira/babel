@@ -35,7 +35,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.apache.log4j.Logger;
+
 public class BibtexUtils {
+
+    static Logger logger = Logger.getLogger(BibtexUtils.class);
 
     public static Reader unescapeUnicode(Reader reader) throws IOException {
         StringWriter writer = new StringWriter();
