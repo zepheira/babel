@@ -3,7 +3,7 @@
   <!-- *************************************************************** -->    
   <target name="configure">
 	<uptodate property="bibtex-uptodate"
-        srcfile="src/BibtexGrammar.jj" 
+        srcfile="src/main/resources/BibtexGrammar.jj" 
 	    targetfile="src/main/java/edu/mit/simile/babel/bibtex/internal/BibtexGrammar.java" 
 		/>
   </target>
@@ -24,7 +24,7 @@
 		fork="true"   
         dir="src/main/java/edu/mit/simile/babel/bibtex/internal/" 
 		failonerror="true">
-	  <arg file="src/BibtexGrammar.jj"/>
+	  <arg file="src/main/resources/BibtexGrammar.jj"/>
       <classpath path="lib/javacc.jar"/>
 	</java>
   </target>
