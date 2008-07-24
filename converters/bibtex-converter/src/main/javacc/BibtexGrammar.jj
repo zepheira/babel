@@ -104,7 +104,7 @@ public final class BibtexGrammar {
     /** 
       * Prints debugging output. Should be called after parse(). 
       */
-    void printout() {
+    public void printout() {
         if (!"".equals(preamble)) System.out.println("\nDEBUG: Found Preamble: \n" + preamble);
 
         System.out.println("\nDEBUG: Found " + strings.size() + " Strings:");
