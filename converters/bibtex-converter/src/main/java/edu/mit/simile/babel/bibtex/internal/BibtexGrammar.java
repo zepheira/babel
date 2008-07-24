@@ -37,14 +37,26 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     /**
       * Parses a file and prints debugging output. 
       */
-    public static void main(String args[]) throws ParseException {
-        try {
-            BibtexGrammar p = new BibtexGrammar(new BufferedReader(new FileReader(args[0])));
-            p.parse();
-            p.printout();
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
+    public static void main(String args[]) throws Exception {
+        if (args.length != 2) {
+            System.err.println("Usage: bibtex_parser fileName encoding");
+            System.exit(-1);
         }
+        String fileName = args[0];
+        String encoding = args[1];
+        BibtexGrammar p = new BibtexGrammar(
+            new BibtexCleanerReader(
+                new BufferedReader (
+                    BibtexUtils.unescapeUnicode(
+                        new InputStreamReader(
+                            new FileInputStream(fileName), encoding
+                        )
+                    )
+                )
+            )
+        );
+        p.parse();
+        p.printout();
     }
 
     /** 
@@ -92,24 +104,28 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     }
     label_1:
     while (true) {
-      if (jj_2_1(2)) {
+      if (jj_2_1(3)) {
         ;
       } else {
         break label_1;
       }
-      if (jj_2_2(2)) {
+      if (jj_2_2(3)) {
         strdef();
-      } else if (jj_2_3(2)) {
+      } else if (jj_2_3(3)) {
         comdef();
-      } else if (jj_2_4(2)) {
+      } else if (jj_2_4(3)) {
         recdef();
-      } else if (jj_2_5(2)) {
+      } else if (jj_2_5(3)) {
         predef();
-      } else if (jj_2_6(2)) {
+      } else if (jj_2_6(3)) {
+        jj_consume_token(WORD);
+      } else if (jj_2_7(3)) {
+        jj_consume_token(COMMA);
+      } else if (jj_2_8(3)) {
         jj_consume_token(WS);
-      } else if (jj_2_7(2)) {
+      } else if (jj_2_9(3)) {
         jj_consume_token(0);
-                                                                 {if (true) return;}
+                                                                                    {if (true) return;}
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -124,34 +140,34 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     String val;
     jj_consume_token(AT);
     jj_consume_token(PRE);
-    if (jj_2_8(2)) {
+    if (jj_2_10(3)) {
       jj_consume_token(WS);
     } else {
       ;
     }
-    if (jj_2_13(2)) {
+    if (jj_2_15(3)) {
       jj_consume_token(LBRACE);
-      if (jj_2_9(2)) {
+      if (jj_2_11(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       val = vals();
-      if (jj_2_10(2)) {
+      if (jj_2_12(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       jj_consume_token(RBRACE);
-    } else if (jj_2_14(2)) {
+    } else if (jj_2_16(3)) {
       jj_consume_token(LPAREN);
-      if (jj_2_11(2)) {
+      if (jj_2_13(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       val = vals();
-      if (jj_2_12(2)) {
+      if (jj_2_14(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -171,24 +187,24 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   final public void strdef() throws ParseException {
     jj_consume_token(AT);
     jj_consume_token(STR);
-    if (jj_2_15(2)) {
+    if (jj_2_17(3)) {
       jj_consume_token(WS);
     } else {
       ;
     }
-    if (jj_2_18(2)) {
+    if (jj_2_20(3)) {
       jj_consume_token(LBRACE);
       pair(strings);
-      if (jj_2_16(2)) {
+      if (jj_2_18(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       jj_consume_token(RBRACE);
-    } else if (jj_2_19(2)) {
+    } else if (jj_2_21(3)) {
       jj_consume_token(LPAREN);
       pair(strings);
-      if (jj_2_17(2)) {
+      if (jj_2_19(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -204,58 +220,51 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   * Consumes a comment definition.
   */
   final public void comdef() throws ParseException {
-    if (jj_2_29(2)) {
-      jj_consume_token(AT);
-      jj_consume_token(COMMENT);
-      if (jj_2_20(2)) {
-        jj_consume_token(WS);
-      } else {
-        ;
-      }
-      if (jj_2_27(2)) {
-        jj_consume_token(LBRACE);
-        label_2:
-        while (true) {
-          if (jj_2_21(2)) {
-            jj_consume_token(WORD);
-          } else if (jj_2_22(2)) {
-            jj_consume_token(WS);
-          } else {
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          if (jj_2_23(2)) {
-            ;
-          } else {
-            break label_2;
-          }
+    jj_consume_token(AT);
+    jj_consume_token(COMMENT);
+    if (jj_2_22(3)) {
+      jj_consume_token(WS);
+    } else {
+      ;
+    }
+    if (jj_2_29(3)) {
+      jj_consume_token(LBRACE);
+      label_2:
+      while (true) {
+        if (jj_2_23(3)) {
+          jj_consume_token(WORD);
+        } else if (jj_2_24(3)) {
+          jj_consume_token(WS);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
         }
-        jj_consume_token(RBRACE);
-      } else if (jj_2_28(2)) {
-        jj_consume_token(LPAREN);
-        label_3:
-        while (true) {
-          if (jj_2_24(2)) {
-            jj_consume_token(WORD);
-          } else if (jj_2_25(2)) {
-            jj_consume_token(WS);
-          } else {
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          if (jj_2_26(2)) {
-            ;
-          } else {
-            break label_3;
-          }
+        if (jj_2_25(3)) {
+          ;
+        } else {
+          break label_2;
         }
-        jj_consume_token(RPAREN);
-      } else {
-        jj_consume_token(-1);
-        throw new ParseException();
       }
-    } else if (jj_2_30(2)) {
-      jj_consume_token(COMM);
+      jj_consume_token(RBRACE);
+    } else if (jj_2_30(3)) {
+      jj_consume_token(LPAREN);
+      label_3:
+      while (true) {
+        if (jj_2_26(3)) {
+          jj_consume_token(WORD);
+        } else if (jj_2_27(3)) {
+          jj_consume_token(WS);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        if (jj_2_28(3)) {
+          ;
+        } else {
+          break label_3;
+        }
+      }
+      jj_consume_token(RPAREN);
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -266,18 +275,19 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   * Consumes a single record definition. 
   */
   final public void recdef() throws ParseException {
-    Token t1, t2 = null;
+    Token t1 = null;
+    Token t2 = null;
     BibMap record = new BibMap();
     jj_consume_token(AT);
     t1 = jj_consume_token(WORD);
-    if (jj_2_31(2)) {
+    if (jj_2_31(3)) {
       jj_consume_token(WS);
     } else {
       ;
     }
-    if (jj_2_40(2)) {
+    if (jj_2_40(3)) {
       jj_consume_token(LBRACE);
-      if (jj_2_32(2)) {
+      if (jj_2_32(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -285,7 +295,7 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
       t2 = jj_consume_token(WORD);
       label_4:
       while (true) {
-        if (jj_2_33(2)) {
+        if (jj_2_33(3)) {
           ;
         } else {
           break label_4;
@@ -293,20 +303,20 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
         jj_consume_token(COMMA);
         pair(record);
       }
-      if (jj_2_34(2)) {
+      if (jj_2_34(3)) {
         jj_consume_token(COMMA);
       } else {
         ;
       }
-      if (jj_2_35(2)) {
+      if (jj_2_35(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       jj_consume_token(RBRACE);
-    } else if (jj_2_41(2)) {
+    } else if (jj_2_41(3)) {
       jj_consume_token(LPAREN);
-      if (jj_2_36(2)) {
+      if (jj_2_36(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -314,7 +324,7 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
       t2 = jj_consume_token(WORD);
       label_5:
       while (true) {
-        if (jj_2_37(2)) {
+        if (jj_2_37(3)) {
           ;
         } else {
           break label_5;
@@ -322,12 +332,12 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
         jj_consume_token(COMMA);
         pair(record);
       }
-      if (jj_2_38(2)) {
+      if (jj_2_38(3)) {
         jj_consume_token(COMMA);
       } else {
         ;
       }
-      if (jj_2_39(2)) {
+      if (jj_2_39(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -337,7 +347,8 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-        String type = t1.toString().toLowerCase(), key = t2.toString();
+        String type = t1.toString().toLowerCase();
+        String key = t2.toString();
         record.setType(type.equals("conference") ? "inproceedings" : type);
         record.setKey(key);
         records.add(record);
@@ -349,19 +360,19 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   final public void pair(Map map) throws ParseException {
     Token id;
     String val;
-    if (jj_2_42(2)) {
+    if (jj_2_42(3)) {
       jj_consume_token(WS);
     } else {
       ;
     }
     id = jj_consume_token(WORD);
-    if (jj_2_43(2)) {
+    if (jj_2_43(3)) {
       jj_consume_token(WS);
     } else {
       ;
     }
     jj_consume_token(EQ);
-    if (jj_2_44(2)) {
+    if (jj_2_44(3)) {
       jj_consume_token(WS);
     } else {
       ;
@@ -380,18 +391,18 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
                   sb.append(val);
     label_6:
     while (true) {
-      if (jj_2_45(2)) {
+      if (jj_2_45(3)) {
         ;
       } else {
         break label_6;
       }
-      if (jj_2_46(2)) {
+      if (jj_2_46(3)) {
         jj_consume_token(WS);
       } else {
         ;
       }
       jj_consume_token(HASH);
-      if (jj_2_47(2)) {
+      if (jj_2_47(3)) {
         jj_consume_token(WS);
       } else {
         ;
@@ -417,17 +428,17 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   final public String val() throws ParseException {
     Token token;
     String val;
-    if (jj_2_48(2)) {
+    if (jj_2_48(3)) {
       jj_consume_token(LBRACE);
       val = wordsq();
       jj_consume_token(RBRACE);
                                          {if (true) return "{" + val + "}";}
-    } else if (jj_2_49(2)) {
+    } else if (jj_2_49(3)) {
       jj_consume_token(QUOTE);
       val = words();
       jj_consume_token(QUOTE);
                                          {if (true) return "{" + val + "}";}
-    } else if (jj_2_50(2)) {
+    } else if (jj_2_50(3)) {
       token = jj_consume_token(WORD);
         String key = token.toString().toLowerCase();
         if (strings.containsKey(key)) {
@@ -451,15 +462,15 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     StringBuffer sb = new StringBuffer();
     label_7:
     while (true) {
-      if (jj_2_51(2)) {
+      if (jj_2_51(3)) {
         ;
       } else {
         break label_7;
       }
-      if (jj_2_52(2)) {
+      if (jj_2_52(3)) {
         s = wordq();
                  sb.append(s);
-      } else if (jj_2_53(2)) {
+      } else if (jj_2_53(3)) {
         jj_consume_token(LBRACE);
         s = wordsq();
         jj_consume_token(RBRACE);
@@ -482,15 +493,15 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     StringBuffer sb = new StringBuffer();
     label_8:
     while (true) {
-      if (jj_2_54(2)) {
+      if (jj_2_54(3)) {
         ;
       } else {
         break label_8;
       }
-      if (jj_2_55(2)) {
+      if (jj_2_55(3)) {
         s = word();
                 sb.append(s);
-      } else if (jj_2_56(2)) {
+      } else if (jj_2_56(3)) {
         jj_consume_token(LBRACE);
         s = wordsq();
         jj_consume_token(RBRACE);
@@ -509,29 +520,29 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   */
   final public String wordq() throws ParseException {
     Token t;
-    if (jj_2_57(2)) {
+    if (jj_2_57(3)) {
       t = jj_consume_token(WS);
-    } else if (jj_2_58(2)) {
+    } else if (jj_2_58(3)) {
       t = jj_consume_token(WORD);
-    } else if (jj_2_59(2)) {
+    } else if (jj_2_59(3)) {
       t = jj_consume_token(EQ);
-    } else if (jj_2_60(2)) {
+    } else if (jj_2_60(3)) {
       t = jj_consume_token(LPAREN);
-    } else if (jj_2_61(2)) {
+    } else if (jj_2_61(3)) {
       t = jj_consume_token(RPAREN);
-    } else if (jj_2_62(2)) {
+    } else if (jj_2_62(3)) {
       t = jj_consume_token(AT);
-    } else if (jj_2_63(2)) {
+    } else if (jj_2_63(3)) {
       t = jj_consume_token(QCHAR);
-    } else if (jj_2_64(2)) {
+    } else if (jj_2_64(3)) {
       t = jj_consume_token(STR);
-    } else if (jj_2_65(2)) {
+    } else if (jj_2_65(3)) {
       t = jj_consume_token(COMMA);
-    } else if (jj_2_66(2)) {
+    } else if (jj_2_66(3)) {
       t = jj_consume_token(HASH);
-    } else if (jj_2_67(2)) {
+    } else if (jj_2_67(3)) {
       t = jj_consume_token(PRE);
-    } else if (jj_2_68(2)) {
+    } else if (jj_2_68(3)) {
       t = jj_consume_token(QUOTE);
     } else {
       jj_consume_token(-1);
@@ -546,27 +557,27 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   */
   final public String word() throws ParseException {
     Token t;
-    if (jj_2_69(2)) {
+    if (jj_2_69(3)) {
       t = jj_consume_token(WS);
-    } else if (jj_2_70(2)) {
+    } else if (jj_2_70(3)) {
       t = jj_consume_token(WORD);
-    } else if (jj_2_71(2)) {
+    } else if (jj_2_71(3)) {
       t = jj_consume_token(EQ);
-    } else if (jj_2_72(2)) {
+    } else if (jj_2_72(3)) {
       t = jj_consume_token(LPAREN);
-    } else if (jj_2_73(2)) {
+    } else if (jj_2_73(3)) {
       t = jj_consume_token(RPAREN);
-    } else if (jj_2_74(2)) {
+    } else if (jj_2_74(3)) {
       t = jj_consume_token(AT);
-    } else if (jj_2_75(2)) {
+    } else if (jj_2_75(3)) {
       t = jj_consume_token(QCHAR);
-    } else if (jj_2_76(2)) {
+    } else if (jj_2_76(3)) {
       t = jj_consume_token(STR);
-    } else if (jj_2_77(2)) {
+    } else if (jj_2_77(3)) {
       t = jj_consume_token(COMMA);
-    } else if (jj_2_78(2)) {
+    } else if (jj_2_78(3)) {
       t = jj_consume_token(HASH);
-    } else if (jj_2_79(2)) {
+    } else if (jj_2_79(3)) {
       t = jj_consume_token(PRE);
     } else {
       jj_consume_token(-1);
@@ -1129,57 +1140,27 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     finally { jj_save(78, xla); }
   }
 
-  final private boolean jj_3_4() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(WS)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_61() {
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_72() {
-    if (jj_scan_token(LPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_14() {
-    if (jj_scan_token(LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_11()) jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_13() {
-    if (jj_scan_token(LBRACE)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_9()) jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
   final private boolean jj_3_3() {
     if (jj_3R_10()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_71() {
+    if (jj_scan_token(EQ)) return true;
     return false;
   }
 
   final private boolean jj_3R_12() {
     if (jj_scan_token(AT)) return true;
     if (jj_scan_token(PRE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_71() {
-    if (jj_scan_token(EQ)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_10()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3_15()) {
+    jj_scanpos = xsp;
+    if (jj_3_16()) return true;
+    }
     return false;
   }
 
@@ -1206,7 +1187,13 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     jj_scanpos = xsp;
     if (jj_3_6()) {
     jj_scanpos = xsp;
-    if (jj_3_7()) return true;
+    if (jj_3_7()) {
+    jj_scanpos = xsp;
+    if (jj_3_8()) {
+    jj_scanpos = xsp;
+    if (jj_3_9()) return true;
+    }
+    }
     }
     }
     }
@@ -1464,6 +1451,11 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
 
   final private boolean jj_3R_13() {
     if (jj_3R_15()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_45()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -1509,6 +1501,9 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     xsp = jj_scanpos;
     if (jj_3_42()) jj_scanpos = xsp;
     if (jj_scan_token(WORD)) return true;
+    xsp = jj_scanpos;
+    if (jj_3_43()) jj_scanpos = xsp;
+    if (jj_scan_token(EQ)) return true;
     return false;
   }
 
@@ -1537,6 +1532,11 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
+  final private boolean jj_3_9() {
+    if (jj_scan_token(0)) return true;
+    return false;
+  }
+
   final private boolean jj_3_76() {
     if (jj_scan_token(STR)) return true;
     return false;
@@ -1547,12 +1547,17 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_25() {
+  final private boolean jj_3_8() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
 
-  final private boolean jj_3_22() {
+  final private boolean jj_3_27() {
+    if (jj_scan_token(WS)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_24() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
@@ -1563,6 +1568,15 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     xsp = jj_scanpos;
     if (jj_3_36()) jj_scanpos = xsp;
     if (jj_scan_token(WORD)) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_37()) { jj_scanpos = xsp; break; }
+    }
+    xsp = jj_scanpos;
+    if (jj_3_38()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3_39()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
     return false;
   }
 
@@ -1572,42 +1586,15 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     xsp = jj_scanpos;
     if (jj_3_32()) jj_scanpos = xsp;
     if (jj_scan_token(WORD)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_20() {
-    if (jj_scan_token(WS)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_17() {
-    if (jj_scan_token(WS)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_26() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_24()) {
-    jj_scanpos = xsp;
-    if (jj_3_25()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_33()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  final private boolean jj_3_24() {
-    if (jj_scan_token(WORD)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_16() {
-    if (jj_scan_token(WS)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_11() {
-    if (jj_scan_token(AT)) return true;
-    if (jj_scan_token(WORD)) return true;
+    xsp = jj_scanpos;
+    if (jj_3_34()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3_35()) jj_scanpos = xsp;
+    if (jj_scan_token(RBRACE)) return true;
     return false;
   }
 
@@ -1616,18 +1603,8 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_21()) {
-    jj_scanpos = xsp;
-    if (jj_3_22()) return true;
-    }
-    return false;
-  }
-
-  final private boolean jj_3_21() {
-    if (jj_scan_token(WORD)) return true;
+  final private boolean jj_3_19() {
+    if (jj_scan_token(WS)) return true;
     return false;
   }
 
@@ -1636,22 +1613,66 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_7() {
-    if (jj_scan_token(0)) return true;
+  final private boolean jj_3R_11() {
+    if (jj_scan_token(AT)) return true;
+    if (jj_scan_token(WORD)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_31()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3_40()) {
+    jj_scanpos = xsp;
+    if (jj_3_41()) return true;
+    }
     return false;
   }
 
-  final private boolean jj_3_12() {
+  final private boolean jj_3_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_26()) {
+    jj_scanpos = xsp;
+    if (jj_3_27()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3_26() {
+    if (jj_scan_token(WORD)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_22() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
 
-  final private boolean jj_3_30() {
-    if (jj_scan_token(COMM)) return true;
+  final private boolean jj_3_18() {
+    if (jj_scan_token(WS)) return true;
     return false;
   }
 
-  final private boolean jj_3_10() {
+  final private boolean jj_3_25() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_23()) {
+    jj_scanpos = xsp;
+    if (jj_3_24()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3_23() {
+    if (jj_scan_token(WORD)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(COMMA)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_14() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
@@ -1661,30 +1682,25 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
+  final private boolean jj_3_12() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
 
-  final private boolean jj_3_28() {
-    if (jj_scan_token(LPAREN)) return true;
-    Token xsp;
-    if (jj_3_26()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_26()) { jj_scanpos = xsp; break; }
-    }
+  final private boolean jj_3_6() {
+    if (jj_scan_token(WORD)) return true;
     return false;
   }
 
-  final private boolean jj_3_27() {
-    if (jj_scan_token(LBRACE)) return true;
+  final private boolean jj_3_30() {
+    if (jj_scan_token(LPAREN)) return true;
     Token xsp;
-    if (jj_3_23()) return true;
+    if (jj_3_28()) return true;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3_23()) { jj_scanpos = xsp; break; }
+      if (jj_3_28()) { jj_scanpos = xsp; break; }
     }
+    if (jj_scan_token(RPAREN)) return true;
     return false;
   }
 
@@ -1693,8 +1709,24 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3R_10() {
+  final private boolean jj_3_29() {
+    if (jj_scan_token(LBRACE)) return true;
     Token xsp;
+    if (jj_3_25()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_25()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(RBRACE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_10() {
+    if (jj_scan_token(AT)) return true;
+    if (jj_scan_token(COMMENT)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_22()) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3_29()) {
     jj_scanpos = xsp;
@@ -1703,19 +1735,8 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_29() {
-    if (jj_scan_token(AT)) return true;
-    if (jj_scan_token(COMMENT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_15() {
+  final private boolean jj_3_17() {
     if (jj_scan_token(WS)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1729,13 +1750,18 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_19() {
+  final private boolean jj_3_5() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_21() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_14()) return true;
     return false;
   }
 
-  final private boolean jj_3_18() {
+  final private boolean jj_3_20() {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_3R_14()) return true;
     return false;
@@ -1744,6 +1770,19 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   final private boolean jj_3R_9() {
     if (jj_scan_token(AT)) return true;
     if (jj_scan_token(STR)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_17()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3_20()) {
+    jj_scanpos = xsp;
+    if (jj_3_21()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3_13() {
+    if (jj_scan_token(WS)) return true;
     return false;
   }
 
@@ -1752,13 +1791,52 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
+  final private boolean jj_3_4() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_10() {
     if (jj_scan_token(WS)) return true;
     return false;
   }
 
+  final private boolean jj_3_61() {
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_72() {
+    if (jj_scan_token(LPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_16() {
+    if (jj_scan_token(LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_13()) jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    xsp = jj_scanpos;
+    if (jj_3_14()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_15() {
+    if (jj_scan_token(LBRACE)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_11()) jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    xsp = jj_scanpos;
+    if (jj_3_12()) jj_scanpos = xsp;
+    if (jj_scan_token(RBRACE)) return true;
+    return false;
+  }
+
   public BibtexGrammarTokenManager token_source;
-  SimpleCharStream jj_input_stream;
+  JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1782,7 +1860,7 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
      this(stream, null);
   }
   public BibtexGrammar(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
+    try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new BibtexGrammarTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1805,7 +1883,7 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
   }
 
   public BibtexGrammar(java.io.Reader stream) {
-    jj_input_stream = new SimpleCharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new BibtexGrammarTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1949,8 +2027,8 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[18];
-    for (int i = 0; i < 18; i++) {
+    boolean[] la1tokens = new boolean[17];
+    for (int i = 0; i < 17; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -1966,7 +2044,7 @@ public final class BibtexGrammar implements BibtexGrammarConstants {
         }
       }
     }
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 17; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

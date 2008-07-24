@@ -29,13 +29,14 @@
  */
 
 options {
-   LOOKAHEAD=2;
+   LOOKAHEAD=3;
    FORCE_LA_CHECK=true;
+   JAVA_UNICODE_ESCAPE=true;
    IGNORE_CASE=true;
    STATIC=false;
 }
 
-// For handling unicode, see http://www.xrce.xerox.com/competencies/content-analysis/tools/publis/javacc_unicode.pdf
+// NOTE(NM): For handling unicode, see http://www.xrce.xerox.com/competencies/content-analysis/tools/publis/javacc_unicode.pdf
 // Those tips don't seem to work, though.
 
 PARSER_BEGIN(BibtexGrammar)
@@ -78,14 +79,26 @@ public final class BibtexGrammar {
     /**
       * Parses a file and prints debugging output. 
       */
-    public static void main(String args[]) throws ParseException {
-        try {
-            BibtexGrammar p = new BibtexGrammar(new BufferedReader(new FileReader(args[0])));
-            p.parse();
-            p.printout();
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
+    public static void main(String args[]) throws Exception {
+        if (args.length != 2) {
+            System.err.println("Usage: bibtex_parser fileName encoding");
+            System.exit(-1);
         }
+        String fileName = args[0];
+        String encoding = args[1];
+        BibtexGrammar p = new BibtexGrammar(
+            new BibtexCleanerReader(
+                new BufferedReader (
+                    BibtexUtils.unescapeUnicode(
+                        new InputStreamReader(
+                            new FileInputStream(fileName), encoding
+                        )
+                    )
+                )
+            )
+        );
+        p.parse();
+        p.printout();
     }
 
     /** 
@@ -126,7 +139,6 @@ TOKEN:{
       | < STR: "string" >
       | < PRE: "preamble" >
       | < COMMENT: "comment" >
-      | < COMM: "%" (~["\n", "\r"])+ (["\n","\r"])+ >
       | < EQ: "=" >
       | < HASH: "#" >
       | < COMMA: (<WS>)? "," >
@@ -157,7 +169,7 @@ void parse():
     }
 }
 {
-    ( strdef() | comdef() | recdef() | predef() | <WS> | <EOF> { return; })*
+    ( strdef() | comdef() | recdef() | predef() | <WORD> | <COMMA> | <WS> | <EOF> { return; })*
 }
 
 /** 
@@ -197,10 +209,10 @@ void comdef():
 {
 }
 {
-    (<AT> <COMMENT> [<WS>] (
+    <AT> <COMMENT> [<WS>] (
        (<LBRACE> (<WORD>|<WS>)+ <RBRACE>)
      | (<LPAREN> (<WORD>|<WS>)+ <RPAREN>)
-    )) | <COMM>
+    )
 }
 
 /** 
@@ -208,7 +220,8 @@ void comdef():
   */
 void recdef():
 {
-    Token t1, t2 = null;
+    Token t1 = null;
+    Token t2 = null;
     BibMap record = new BibMap();
 }
 {
@@ -217,7 +230,8 @@ void recdef():
       | (<LPAREN> [<WS>] (t2=<WORD>) (<COMMA> pair(record))* [<COMMA>][<WS>] <RPAREN>)
     )
     {
-        String type = t1.toString().toLowerCase(), key = t2.toString();
+        String type = t1.toString().toLowerCase();
+        String key = t2.toString();
         record.setType(type.equals("conference") ? "inproceedings" : type);
         record.setKey(key);
         records.add(record);

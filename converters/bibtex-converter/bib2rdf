@@ -1,3 +1,0 @@
-#!/bin/sh
-java -classpath target/babel-bibtex-converter-1.0-SNAPSHOT.jar edu.mit.simile.babel.bibtex.internal.BibtexGrammar $*
-

@@ -1,5 +1,5 @@
 /*
- *  (c) Copyright The SIMILE Project 2003-2004. All rights reserved.
+ *  (c) Copyright The SIMILE Project 2003-2008. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,37 +30,53 @@
 
 package edu.mit.simile.babel.bibtex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import edu.mit.simile.babel.util.Util;
 
 /**
  * @author matsakis
  * @author dfhuynh
- *
  */
+
 final public class BibMap extends HashMap {
-	private static final long serialVersionUID = -6088386205750299855L;
+
+    private static final long serialVersionUID = -6088386205750299855L;
 	
 	private char hashdelim = '\u0000';
 	private String type;
 	private String key;
 	private String uri;
 	
-	public void setType(String type){this.type = type;}
-	public String getType(){return type;}
+	public void setType(String type){
+	    this.type = type;
+	}
+	public String getType(){
+	    return type;
+	}
 
-	public void setKey(String key){this.key = key;}
-	public String getKey(){return key;}
+	public void setKey(String key){
+	    this.key = key;
+	}
+	public String getKey(){
+	    return key;
+	}
 	
-	public String getURI(){return uri;}
+	public String getURI(){
+	    return uri;
+	}
 
-	//////////////////////////////////////////////////////////////////////
-	/** Creates a hash of a bibtex record suitable for use as a unique
+	/** 
+	 * Creates a hash of a bibtex record suitable for use as a unique
 	 * identifier.  This hash is invariant to: permutations in the
 	 * order of fields, capitalization variation in the keys of
 	 * fields, choice of field value delimiters, and whitespace
-	 * between fields in the record. */
+	 * between fields in the record. 
+	 */
 	public String createURI(){	
 		// Concatenate the type and key, terminated by a null character
 		StringBuffer sb = new StringBuffer(512);
@@ -89,10 +105,11 @@ final public class BibMap extends HashMap {
 		return uri;
 	}
 	
-	//////////////////////////////////////////////////////////////////////
-	/** Some strings in the map are enclosed in brackets {} because they
-		were strings in the original bibtex.  This method removes those
-		brackets indiscriminately. */
+	/** 
+	 * Some strings in the map are enclosed in brackets {} because they
+	 * were strings in the original bibtex.  This method removes those
+	 * brackets indiscriminately. 
+	 */
 	public void normalizeStrings(){
 		Iterator keyset = keySet().iterator();
 		while(keyset.hasNext()){

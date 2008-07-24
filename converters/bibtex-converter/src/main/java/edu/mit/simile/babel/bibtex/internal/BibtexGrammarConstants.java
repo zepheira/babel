@@ -9,18 +9,17 @@ public interface BibtexGrammarConstants {
   int STR = 3;
   int PRE = 4;
   int COMMENT = 5;
-  int COMM = 6;
-  int EQ = 7;
-  int HASH = 8;
-  int COMMA = 9;
-  int LPAREN = 10;
-  int RPAREN = 11;
-  int QUOTE = 12;
-  int LBRACE = 13;
-  int RBRACE = 14;
-  int DELIM = 15;
-  int QCHAR = 16;
-  int WORD = 17;
+  int EQ = 6;
+  int HASH = 7;
+  int COMMA = 8;
+  int LPAREN = 9;
+  int RPAREN = 10;
+  int QUOTE = 11;
+  int LBRACE = 12;
+  int RBRACE = 13;
+  int DELIM = 14;
+  int QCHAR = 15;
+  int WORD = 16;
 
   int DEFAULT = 0;
 
@@ -31,7 +30,6 @@ public interface BibtexGrammarConstants {
     "\"string\"",
     "\"preamble\"",
     "\"comment\"",
-    "<COMM>",
     "\"=\"",
     "\"#\"",
     "<COMMA>",

@@ -1,5 +1,5 @@
 /*
- *  (c) Copyright The SIMILE Project 2003-2004. All rights reserved.
+ *  (c) Copyright The SIMILE Project 2003-2008. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,21 @@
 
 package edu.mit.simile.babel.bibtex;
 
-import java.io.*;
-import java.util.regex.*;
+import java.io.BufferedReader;
+import java.io.FilterReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author matsakis
  * @author dfhuynh
- *
+ * @author stefanom
  */
-final class BibtexCleanerReader extends FilterReader{
 
+final public class BibtexCleanerReader extends FilterReader {
+    
 	// The two possible states a BibtexCleanerReader can be in
 	private final int REC = 0;
 	private final int CRUD = 1;
@@ -55,34 +60,16 @@ final class BibtexCleanerReader extends FilterReader{
 	// Buffer the current line in buffer
 	private final StringBuffer buffer = new StringBuffer();
 	// This pattern detects the beginning of a record
-	private final Pattern recpattern = 
-			Pattern.compile("@\\p{Blank}*\\p{Alpha}+\\p{Blank}*[({]");
+	private final Pattern recpattern = Pattern.compile("@\\p{Blank}*\\p{Alpha}+\\p{Blank}*[({]");
 	
-	protected BibtexCleanerReader(Reader in){
+	
+	public BibtexCleanerReader(Reader in){
 		super(in);
 		this.in = new BufferedReader(in);
 		inIsEmpty = done = false;
 	}
-
-	// can be called to test the class on a single input file
-	public static void main(String[] args) throws IOException{
-		if(args.length != 1){
-			System.out.println("Usage: java BibtexCleanerReader file.bib");
-			System.exit(0);
-		}
-
-		File outfile, infile = new File(args[0]);
-		outfile = new File(infile.getParentFile(), "clean-"+infile.getName());
-		Reader in = new BibtexCleanerReader(new FileReader(args[0]));
-		Writer out = new BufferedWriter(new FileWriter(outfile));
-		
-		int c;
-		while((c = in.read()) != -1)
-			out.write((char)c);
-		out.close();
-	}
 	
-	// Methods that respect the public inferface of a Reader, with a little
+	// Methods that respect the public interface of a Reader, with a little
 	// glue that supports the implementation of this class
 
 	public void reset() throws IOException{
@@ -123,9 +110,9 @@ final class BibtexCleanerReader extends FilterReader{
 
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int count = 0;
-		while(count < len && !done){
+		while (count < len && !done) {
 			int c = read();
-			if(c != -1){
+			if (c != -1) {
 				cbuf[off++] = (char) c;
 				count++;
 			}
@@ -137,9 +124,10 @@ final class BibtexCleanerReader extends FilterReader{
 	// empty, calls readline() to fill it.  If readline() doesn't add anything
 	// else, sets done and returns -1 henceforth.
 	public int read() throws IOException {
-		if (!done && buffer.length() == 0)
+		if (!done && buffer.length() == 0) {
 			readline();
-		if (done || buffer.length() == 0){
+		}
+		if (done || buffer.length() == 0) {
 			done = true;
 			return -1;
 		}
@@ -151,16 +139,17 @@ final class BibtexCleanerReader extends FilterReader{
 	// Responsible for augmenting buffer and setting inIsEmpty.  The only
 	// method that touches "in" directly.
 	private void readline() throws IOException {
-		if(inIsEmpty)
+		if (inIsEmpty) {
 			return;
+		}
 		String text = ((BufferedReader) in).readLine();
-		if(text == null){
+		if (text == null) {
 			inIsEmpty = true;
 			return;
 		}
 		StringBuffer line = new StringBuffer(text);
 
-		switch(state) {
+		switch (state) {
 			case CRUD: crud(line); break;
 			case REC: rec(line);
 		}
@@ -173,7 +162,7 @@ final class BibtexCleanerReader extends FilterReader{
 	// record to the buffer, and then enters record mode
 	private void crud(StringBuffer line){
 		Matcher match = recpattern.matcher(line);
-		if(match.find()){
+		if (match.find()) {
 			String recstart = match.group();
 			line.delete(0, line.indexOf(recstart) + recstart.length());
 			buffer.append(recstart);
@@ -181,8 +170,7 @@ final class BibtexCleanerReader extends FilterReader{
 			state = REC;
 			bracecount = 0;
 			rec(line);
-		}
-		else {
+		} else {
 			line.delete(0, line.length());
 		}
 	}
@@ -196,21 +184,21 @@ final class BibtexCleanerReader extends FilterReader{
 	private void rec(StringBuffer line){
 		boolean closed = false;
 		int i = 0;
-		while(!closed && i<line.length()){
+		while (!closed && i<line.length()) {
 			char c = line.charAt(i++);
-			if (c == '{')
+			if (c == '{') {
 				bracecount++;
-			else if (c == '}')
+			} else if (c == '}') {
 				bracecount--;
-			if((c == ')' && delimiter == '(' && bracecount == 0) ||
-			   (c == '}' && delimiter == '{' && bracecount == -1))
+			}
+			if ((c == ')' && delimiter == '(' && bracecount == 0) ||
+			    (c == '}' && delimiter == '{' && bracecount == -1))
 				closed = true;
 			}
-		if(!closed){
+		if (!closed) {
 			buffer.append(line);
 			line.delete(0, line.length());
-		}
-		else{
+		} else {
 			buffer.append(line.substring(0, i));
 			line.delete(0, i);
 			state = CRUD;
