@@ -73,31 +73,6 @@ public final class BibtexGrammar {
         return records;
     }
 
-    /**
-      * Parses a file and prints debugging output. 
-      */
-    public static void main(String args[]) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Usage: bibtex_parser fileName encoding");
-            System.exit(-1);
-        }
-        String fileName = args[0];
-        String encoding = args[1];
-        BibtexGrammar p = new BibtexGrammar(
-            new BibtexCleanerReader(
-                new BufferedReader (
-                    BibtexUtils.unescapeUnicode(
-                        new InputStreamReader(
-                            new FileInputStream(fileName), encoding
-                        )
-                    )
-                )
-            )
-        );
-        p.parse();
-        p.printout();
-    }
-
     /** 
       * Prints debugging output. Should be called after parse(). 
       */

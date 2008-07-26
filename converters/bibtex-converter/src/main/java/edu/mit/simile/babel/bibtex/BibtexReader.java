@@ -179,7 +179,8 @@ public final class BibtexReader implements BabelReader {
 						if (v == null) {
 							continue;
 						} else {
-							v = BibtexUtils.unescapeUnicode(v).replaceAll("\\s+", " ");;
+							//v = BibtexUtils.unescapeUnicode(v).replaceAll("\\s+", " ");;
+						    v = v.replaceAll("\\s+"," ");
 						}
 						
 						boolean isMultiple = false;
@@ -199,7 +200,7 @@ public final class BibtexReader implements BabelReader {
 							
 							String[] segments = StringUtils.splitByWholeSeparator(v, " and ");
 							for (int x = 0; x < segments.length; x++) {
-								String originalName = BibtexUtils.unescapeBibtexSpecialCharacters(segments[x].trim());
+								String originalName = segments[x].trim();
 								if (originalName.startsWith("and ")) {
 									originalName = originalName.substring(4);
 								}
@@ -240,7 +241,7 @@ public final class BibtexReader implements BabelReader {
 						    String[] tags = StringUtils.splitByWholeSeparator(v, ",");
 						    for (String tag : tags) {
                                 tag = tag.trim();
-                                Value value = (Value) new LiteralImpl(BibtexUtils.unescapeBibtexSpecialCharacters(tag));
+                                Value value = (Value) new LiteralImpl(tag);
                                 c.addStatement(record, predicate, value);   
 						    }
 						} else if (isMultiple) {
@@ -249,14 +250,14 @@ public final class BibtexReader implements BabelReader {
 								v2 = v2.trim();
 								Value value = (p.equals("crossref") && keymap.containsKey(v2))
 									? (Value) new URIImpl(((BibMap) keymap.get(v2)).getURI())
-									: (Value) new LiteralImpl(BibtexUtils.unescapeBibtexSpecialCharacters(v2));
+									: (Value) new LiteralImpl(v2);
 								
 								c.addStatement(record, predicate, value);	
 							}
 						} else {
 							Value value = (p.equals("crossref") && keymap.containsKey(v))
 								? (Value) new URIImpl(((BibMap) keymap.get(v)).getURI())
-								: (Value) new LiteralImpl(BibtexUtils.unescapeBibtexSpecialCharacters(v));
+								: (Value) new LiteralImpl(v);
 								
 							c.addStatement(record, predicate, value);	
 						}
