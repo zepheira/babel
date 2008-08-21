@@ -198,8 +198,8 @@ void recdef():
 }
 {
     <AT> (t1 = <WORD>) [<WS>] (
-        (<LBRACE> [<WS>] [(t2=<WORD>) <COMMA>] (pair(record))* [<WS>] <RBRACE>)
-      | (<LPAREN> [<WS>] [(t2=<WORD>) <COMMA>] (pair(record))* [<WS>] <RPAREN>)
+        (<LBRACE> [<WS>] [(t2=<WORD> | t2=<COMMENT> | t2=<STR> | t2=<PRE>) <COMMA>] (pair(record))* [<WS>] <RBRACE>)
+      | (<LPAREN> [<WS>] [(t2=<WORD> | t2=<COMMENT> | t2=<STR> | t2=<PRE>) <COMMA>] (pair(record))* [<WS>] <RPAREN>)
     )
     {
         record.setType(t1.toString().toLowerCase());
@@ -219,7 +219,7 @@ void pair(Map map):
     String val;
 }
 {
-    [<WS>] (id=<WORD>) [<WS>] <EQ> [<WS>] (val = vals()) [<WS>] [<COMMA>]
+    [<WS>] (id=<WORD> | id=<COMMENT> | id=<STR> | id=<PRE>) [<WS>] <EQ> [<WS>] (val = vals()) [<WS>] [<COMMA>]
     { 
         map.put(id.toString().toLowerCase(), val); 
     }
@@ -311,7 +311,7 @@ String wordq():
     Token t;
 }
 {
-    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH>  | t=<PRE> | t=<QUOTE>)
+    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH>  | t=<PRE> | t=<QUOTE> | t=<COMMENT>)
     { return(t.toString()); }
 }
 
@@ -323,7 +323,7 @@ String word():
     Token t;
 }
 {
-    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH> | t=<PRE>)
+    (t=<WS> | t=<WORD> | t=<EQ> | t=<LPAREN> | t=<RPAREN> | t=<AT> | t=<QCHAR> | t=<STR>| t=<COMMA> | t=<HASH> | t=<PRE> | t=<COMMENT>)
     { return(t.toString()); }
 }
 
