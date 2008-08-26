@@ -108,8 +108,6 @@ public final class BibtexReader implements BabelReader {
 	public void read(Reader reader, Sail sail, Properties properties, Locale locale) throws Exception {
 		String ourNamespace = properties.getProperty("namespace");
 		
-		reader = BibtexUtils.unescapeUnicode(reader);
-		
 		BibtexGrammar parser = new BibtexGrammar(new BibtexCleanerReader(reader));
 		parser.parse();
 		
@@ -179,8 +177,7 @@ public final class BibtexReader implements BabelReader {
 						if (v == null) {
 							continue;
 						} else {
-							//v = BibtexUtils.unescapeUnicode(v).replaceAll("\\s+", " ");;
-						    v = v.replaceAll("\\s+"," ");
+							v = BibtexUtils.unescapeUnicode(v).replaceAll("\\s+", " ");;
 						}
 						
 						boolean isMultiple = false;

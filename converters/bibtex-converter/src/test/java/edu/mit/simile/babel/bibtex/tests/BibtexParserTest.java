@@ -37,12 +37,12 @@ public class BibtexParserTest {
         1,
         7,
         2,
-        168,
+        169,
         36,
         907,
         317,
         10,
-        5
+        6
     };
 
     @Test public void testCleaner() throws Exception {
@@ -54,9 +54,7 @@ public class BibtexParserTest {
                 stream = this.getClass().getClassLoader().getResourceAsStream(files[i]);
                 BibtexCleanerReader r = new BibtexCleanerReader(
                     new BufferedReader(
-                        BibtexUtils.unescapeUnicode(
-                            new InputStreamReader(stream, "US-ASCII")
-                        )
+                        new InputStreamReader(stream)
                     )
                 );
                 StringWriter w = new StringWriter();
@@ -84,9 +82,7 @@ public class BibtexParserTest {
                 BibtexGrammar p = new BibtexGrammar(
                     new BibtexCleanerReader(
                         new BufferedReader(
-                            BibtexUtils.unescapeUnicode(
-                                new InputStreamReader(stream, "US-ASCII")
-                            )
+                            new InputStreamReader(stream)
                         )
                     )
                 );

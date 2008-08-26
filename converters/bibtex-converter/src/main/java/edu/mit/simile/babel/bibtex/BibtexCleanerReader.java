@@ -155,6 +155,8 @@ final public class BibtexCleanerReader extends FilterReader {
 		}
 		StringBuffer line = new StringBuffer(text);
 
+		line = BibtexUtils.escapeUnicode(line);
+		
 		switch (state) {
 			case CRUD: crud(line); break;
 			case REC: rec(line);

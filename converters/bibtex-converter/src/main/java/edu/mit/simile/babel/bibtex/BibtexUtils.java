@@ -30,45 +30,35 @@
 
 package edu.mit.simile.babel.bibtex;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-
 import org.apache.log4j.Logger;
 
 public class BibtexUtils {
 
     static Logger logger = Logger.getLogger(BibtexUtils.class);
+    
+    public static StringBuffer escapeUnicode(StringBuffer in) {
 
-    public static Reader unescapeUnicode(Reader reader) throws IOException {
-        StringWriter writer = new StringWriter();
+        StringBuffer out = new StringBuffer(in.length());
         
-        char[] chars = new char[1024];
-        int l = 0;
-        while ((l = reader.read(chars)) > 0) {
-            for (int k = 0; k < l; k++) {
-                char c = chars[k];
-                
-                if ((c & 0xFF80) == 0) { // 2-digit hex
-                    writer.append(c);
-                } else { // Unicode.
-                    writer.append("\\u");
-                    
-                    // append hexadecimal form of c left-padded with 0
-                    for (int shift = (4 - 1) * 4; shift >= 0; shift -= 4) {
-                        int digit = 0xf & (c >> shift);
-                        int hc = (digit < 10) ? '0' + digit : 'a' - 10 + digit;
-                        writer.append((char) hc);
-                    }
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if ((c & 0xFF80) == 0) {
+                if (i > 0 && c == 'u' && in.charAt(i-1) == '\\') {
+                    out.append('\\');
                 }
+                out.append(c);
+            } else {
+                out.append("\\u");
+                // append hexadecimal form of c left-padded with 0
+                for (int shift = (4 - 1) * 4; shift >= 0; shift -= 4) {
+                    int digit = 0xf & (c >> shift);
+                    int hc = (digit < 10) ? '0' + digit : 'a' - 10 + digit;
+                    out.append((char) hc);
+                }                
             }
         }
-        writer.close();
-        
-        String input = writer.toString().replace("\\u", "\\\\u");
-        
-        return new StringReader(input);
+
+        return out;
     }
     
     public static String unescapeUnicode(String s) {
@@ -81,10 +71,16 @@ public class BibtexUtils {
         int u = s.indexOf("\\u", l);
         while (u >= 0) {
             sb.append(s.substring(l, u));
-            try {
-                sb.append((char) Integer.parseInt(s.substring(u + 2, u + 6), 16));
-                l = u + 6;
-            } catch (Exception e) {
+            if (u > 0 && s.charAt(u-1) != '\\') {
+                try {
+                    sb.append((char) Integer.parseInt(s.substring(u + 2, u + 6), 16));
+                    l = u + 6;
+                } catch (Exception e) {
+                    logger.info(e);
+                    sb.append("\\u");
+                    l = u + 2;
+                }
+            } else {
                 sb.append("\\u");
                 l = u + 2;
             }
