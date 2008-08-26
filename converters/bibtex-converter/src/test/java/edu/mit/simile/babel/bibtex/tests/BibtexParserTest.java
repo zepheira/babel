@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import edu.mit.simile.babel.bibtex.BibtexCleanerReader;
 import edu.mit.simile.babel.bibtex.BibtexGrammar;
-import edu.mit.simile.babel.bibtex.BibtexUtils;
 
 public class BibtexParserTest {
 

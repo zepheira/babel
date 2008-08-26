@@ -3,6 +3,7 @@ package edu.mit.simile.babel.bibtex.tests;
 import static org.junit.Assert.assertTrue;
 import info.aduna.iteration.CloseableIteration;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -20,6 +21,7 @@ import org.openrdf.sail.memory.MemoryStore;
 
 import edu.mit.simile.babel.BabelReader;
 import edu.mit.simile.babel.bibtex.BibtexCleanerReader;
+import edu.mit.simile.babel.bibtex.BibtexGrammar;
 import edu.mit.simile.babel.bibtex.BibtexReader;
 
 public class BibtexFormatterTest {
@@ -39,7 +41,7 @@ public class BibtexFormatterTest {
         "edge_cases.bib"
     };
     
-    @Test public void testFormatter() throws Exception {
+    @Test public void testFormatter() throws Throwable {
         int counter = 0;
         Properties p = new Properties();
         p.setProperty("namespace", "urn:blah:");
@@ -54,20 +56,17 @@ public class BibtexFormatterTest {
                 
                 InputStream stream = this.getClass().getClassLoader().getResourceAsStream(files[i]);
                 try {
-                    BibtexCleanerReader r = new BibtexCleanerReader(
-                        new InputStreamReader(stream, "US-ASCII")
-                    );
                     BabelReader reader = new BibtexReader();
-                    reader.read(r, store, p, Locale.getDefault());
+                    reader.read(new InputStreamReader(stream), store, p, Locale.getDefault());
                 } finally {
                     stream.close();
                 }
-    
+
                 StringWriter out = new StringWriter();
                 SailConnection connection = store.getConnection();
                 try {
                     N3Writer n3Writer = new N3Writer(out);
-                    
+                
                     n3Writer.startRDF();
                     CloseableIteration<? extends Namespace, SailException> n = connection.getNamespaces();
                     try {
@@ -93,7 +92,7 @@ public class BibtexFormatterTest {
                 }
                 
                 //logger.info(out.toString());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error(e);
                 throw e;
             } finally {
