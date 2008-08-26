@@ -29,7 +29,7 @@ public class BibtexEscapingTest {
             InputStream stream = null;
             try {
                 stream = this.getClass().getClassLoader().getResourceAsStream(files[i]);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
                 
                 String line;
                 while ((line = reader.readLine()) != null) {

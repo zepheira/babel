@@ -81,7 +81,7 @@ public class BibtexParserTest {
                 BibtexGrammar p = new BibtexGrammar(
                     new BibtexCleanerReader(
                         new BufferedReader(
-                            new InputStreamReader(stream)
+                            new InputStreamReader(stream, "UTF-8")
                         )
                     )
                 );

@@ -3,7 +3,6 @@ package edu.mit.simile.babel.bibtex.tests;
 import static org.junit.Assert.assertTrue;
 import info.aduna.iteration.CloseableIteration;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -20,8 +19,6 @@ import org.openrdf.sail.SailException;
 import org.openrdf.sail.memory.MemoryStore;
 
 import edu.mit.simile.babel.BabelReader;
-import edu.mit.simile.babel.bibtex.BibtexCleanerReader;
-import edu.mit.simile.babel.bibtex.BibtexGrammar;
 import edu.mit.simile.babel.bibtex.BibtexReader;
 
 public class BibtexFormatterTest {
@@ -57,7 +54,7 @@ public class BibtexFormatterTest {
                 InputStream stream = this.getClass().getClassLoader().getResourceAsStream(files[i]);
                 try {
                     BabelReader reader = new BibtexReader();
-                    reader.read(new InputStreamReader(stream), store, p, Locale.getDefault());
+                    reader.read(new InputStreamReader(stream, "UTF-8"), store, p, Locale.getDefault());
                 } finally {
                     stream.close();
                 }
