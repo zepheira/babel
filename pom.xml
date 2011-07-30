@@ -101,7 +101,7 @@
 			</snapshots>
 			<id>aduna-repo</id>
 			<name>Aduna Repository</name>
-			<url>http://repo.aduna-software.org/releases</url>
+			<url>http://repo.aduna-software.org/maven2/releases</url>
 		</repository>
 		<repository>
 			<releases>
@@ -116,7 +116,7 @@
 			</snapshots>
 			<id>aduna-snapshot-repo</id>
 			<name>Aduna Snapshot Repository</name>
-			<url>http://repo.aduna-software.org/snapshots</url>
+			<url>http://repo.aduna-software.org/maven2/snapshots</url>
 		</repository>
 	</repositories>
 
