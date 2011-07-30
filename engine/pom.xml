@@ -78,11 +78,6 @@
         <artifactId>babel-xls-converter</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
-    <dependency>
-        <groupId>edu.mit.simile</groupId>
-        <artifactId>babel-jpeg-converter</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </dependency>
 
     
     <dependency>
@@ -122,7 +117,7 @@
     <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.15</version>
+        <version>1.2.16</version>
     </dependency>
 		
     <!-- =============== Miscellaneous utilities =============== -->
