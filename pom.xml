@@ -88,10 +88,6 @@
   </build>
   
 	<repositories>
-	    <repository>
-	        <id>simile.mit.edu</id>
-	        <url>http://simile.mit.edu/maven-proxy</url>
-	    </repository>
 		<repository>
 			<releases>
 				<enabled>true</enabled>
@@ -105,7 +101,7 @@
 			</snapshots>
 			<id>aduna-repo</id>
 			<name>Aduna Repository</name>
-			<url>http://repository.aduna-software.org/maven2</url>
+			<url>http://repo.aduna-software.org/releases</url>
 		</repository>
 		<repository>
 			<releases>
@@ -120,7 +116,7 @@
 			</snapshots>
 			<id>aduna-snapshot-repo</id>
 			<name>Aduna Snapshot Repository</name>
-			<url>http://repository.aduna-software.org/maven2-snapshots</url>
+			<url>http://repo.aduna-software.org/snapshots</url>
 		</repository>
 	</repositories>
 
