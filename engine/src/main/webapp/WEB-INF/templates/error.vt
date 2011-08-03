@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <link rel="stylesheet" href="http://simile.mit.edu/styles/default.css" type="text/css" />
+        <link rel="stylesheet" href="styles/default.css" type="text/css" />
         <title>Simile | Babel | Error</title>
         <style>
             body {
@@ -20,8 +20,7 @@
     </head>
     <body>
         <ul id="path">
-            <li><a href="http://simile.mit.edu/" title="Home">SIMILE</a></li>
-            <li><a href="http://simile.mit.edu/babel/" title="Babel">Babel</a></li>
+            <li><a href="${globalBase}" title="Babel">Babel</a></li>
             <li><span>Error</span></li>
         </ul>
         <div id="body">
