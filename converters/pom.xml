@@ -9,13 +9,13 @@
   
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel-converters</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>SIMILE Babel Converters Modules</name>
 
   <parent>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
   </parent>
     
   <modules>

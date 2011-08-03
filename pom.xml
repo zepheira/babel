@@ -8,13 +8,13 @@
 
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   
   <packaging>pom</packaging>
 
   <name>SIMILE Babel</name>
   <description>Babel is a web interface for converting between a variety of data formats.</description> 
-  <url>http://simile.mit.edu/babel/</url>
+  <url></url>
   <inceptionYear>2006</inceptionYear>
 
   <organization>
@@ -25,7 +25,7 @@
   <licenses>
     <license>
       <name>BSD</name>
-      <url>http://simile.mit.edu/license</url>
+      <url>https://raw.github.com/zepheira/babel/master/LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -37,21 +37,21 @@
   </modules>
   
   <issueManagement>
-    <system>jira</system>
-    <url>http://simile.mit.edu/issues/browse/BABEL</url>
+    <system>GitHub</system>
+    <url>https://github.com/zepheira/babel/issues</url>
   </issueManagement>
-
+<!--
   <distributionManagement>
     <repository>
-      <id>simile.mit.edu</id>
-      <url>scpexe://simile.mit.edu/var/maven</url>
+      <id></id>
+      <url></url>
     </repository>
   </distributionManagement>
-
+-->
   <scm>
-    <connection>scm:svn:http://simile.mit.edu/repository/babel/trunk/</connection>
-    <developerConnection>scm:svn:http://simile.mit.edu/repository/babel/trunk/</developerConnection>
-    <url>http://simile.mit.edu/viewsvn/babel/trunk/</url>
+    <connection>scm:git:git://github.com/zepheira/babel.git</connection>
+    <developerConnection>scm:git:git@github.com:zepheira/babel.git</developerConnection>
+    <url>https://github.com/zepheira/babel</url>
   </scm>
 
   <build>

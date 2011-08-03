@@ -4,26 +4,26 @@
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel-exhibit-converter</artifactId>
   <name>SIMILE Exhibit Converter</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <description>Exhibit Converter is part of the Babel project. It reads and writes data in exhibit formats.</description>
-  <url>http://simile.mit.edu/babel/</url>
+  <url></url>
 
   <parent>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel-converters</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
   </parent>
 	
   <dependencies>
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel-interfaces</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel-bibtex-converter</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>rhino</groupId>
