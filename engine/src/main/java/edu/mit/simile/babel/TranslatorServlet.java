@@ -14,9 +14,11 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -48,6 +50,7 @@ public class TranslatorServlet extends HttpServlet {
 	final static private Logger s_logger = Logger.getLogger(TranslatorServlet.class);
 	
     private VelocityEngine m_ve;
+	private Properties velocityConstants = new Properties();
     
     static protected class ResponseInfo {
     	int		m_status = HttpServletResponse.SC_OK;
@@ -69,6 +72,14 @@ public class TranslatorServlet extends HttpServlet {
             
             m_ve = new VelocityEngine();
             m_ve.init(velocityProperties);
+
+            ResourceBundle velocityConstantsBundle = ResourceBundle.getBundle("velocity");
+            Enumeration constantKeys = velocityConstantsBundle.getKeys();
+            while (constantKeys.hasMoreElements()) {
+                String key = (String) constantKeys.nextElement();
+                String value = velocityConstantsBundle.getString(key);
+                velocityConstants.setProperty(key, value);
+            }
         } catch (Exception e) {
             s_logger.error("Error initializing TranslatorServlet", e);
         }
@@ -392,6 +403,14 @@ public class TranslatorServlet extends HttpServlet {
 	                vcContext.put("stackTrace", stringWriter.toString());
 	            }
             }
+
+            Enumeration velocityConstantKeys = velocityConstants.propertyNames();
+            while (velocityConstantKeys.hasMoreElements()) {
+                String key = (String) velocityConstantKeys.nextElement();
+                String value = velocityConstants.getProperty(key);
+                vcContext.put(key, value);
+            }
+
             m_ve.mergeTemplate("error.vt", vcContext, writer);
         } catch (Throwable e1) {
         	s_logger.error("Failed to write error into response", e1);

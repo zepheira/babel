@@ -10,8 +10,10 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +47,7 @@ public class ValidatorServlet extends HttpServlet {
 	final static private Logger s_logger = Logger.getLogger(ValidatorServlet.class);
 
 	private VelocityEngine m_ve;
+	private Properties velocityConstants = new Properties();
 	
 	@Override
 	public void init() throws ServletException {
@@ -60,6 +63,14 @@ public class ValidatorServlet extends HttpServlet {
     		
             m_ve = new VelocityEngine();
 			m_ve.init(velocityProperties);
+
+            ResourceBundle velocityConstantsBundle = ResourceBundle.getBundle("velocity");
+            Enumeration constantKeys = velocityConstantsBundle.getKeys();
+            while (constantKeys.hasMoreElements()) {
+                String key = (String) constantKeys.nextElement();
+                String value = velocityConstantsBundle.getString(key);
+                velocityConstants.setProperty(key, value);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -152,6 +163,13 @@ public class ValidatorServlet extends HttpServlet {
             try {
                 VelocityContext vcContext = new VelocityContext();
    	            vcContext.put("hasCode", new Boolean(false));
+
+                Enumeration velocityConstantKeys = velocityConstants.propertyNames();
+                while (velocityConstantKeys.hasMoreElements()) {
+                    String key = (String) velocityConstantKeys.nextElement();
+                    String value = velocityConstants.getProperty(key);
+                    vcContext.put(key, value);
+                }
    	            
 	            m_ve.mergeTemplate("validator.vt", vcContext, response.getWriter());
 	        } catch (Throwable t) {

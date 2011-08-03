@@ -3,7 +3,9 @@ package edu.mit.simile.babel;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ public class PreviewServlet extends TranslatorServlet {
 	//final static private Logger s_logger = Logger.getLogger(PreviewServlet.class);
 	
 	private VelocityEngine m_ve;
+	private Properties velocityConstants = new Properties();
 	
 	@Override
 	public void init() throws ServletException {
@@ -41,6 +44,14 @@ public class PreviewServlet extends TranslatorServlet {
     		
             m_ve = new VelocityEngine();
 			m_ve.init(velocityProperties);
+
+            ResourceBundle velocityConstantsBundle = ResourceBundle.getBundle("velocity");
+            Enumeration constantKeys = velocityConstantsBundle.getKeys();
+            while (constantKeys.hasMoreElements()) {
+                String key = (String) constantKeys.nextElement();
+                String value = velocityConstantsBundle.getString(key);
+                velocityConstants.setProperty(key, value);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +86,13 @@ public class PreviewServlet extends TranslatorServlet {
 	            vcContext.put("data", writer.toString());
 	            vcContext.put("utilities", new PreviewUtilities());
 		            
+                Enumeration velocityConstantKeys = velocityConstants.propertyNames();
+                while (velocityConstantKeys.hasMoreElements()) {
+                    String key = (String) velocityConstantKeys.nextElement();
+                    String value = velocityConstants.getProperty(key);
+                    vcContext.put(key, value);
+                }
+
 	    		response.setCharacterEncoding("UTF-8");
 	    		response.setContentType("text/html");
 	    		response.setStatus(HttpServletResponse.SC_OK);
