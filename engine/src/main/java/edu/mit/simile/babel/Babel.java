@@ -42,7 +42,6 @@ public class Babel {
         s_readers.put("bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
         s_readers.put("exhibit-json", "edu.mit.simile.babel.exhibit.ExhibitJsonReader");
         s_readers.put("exhibit-html", "edu.mit.simile.babel.exhibit.ExhibitWebPageReader");
-        s_readers.put("jpeg", "edu.mit.simile.babel.jpeg.JPEGReader");
 
         s_readersFromMimeType.put("application/rdf+xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
         s_readersFromMimeType.put("application/rdf+n3", "edu.mit.simile.babel.generic.N3Converter");
@@ -52,7 +51,6 @@ public class Babel {
         s_readersFromMimeType.put("text/x-bibtex", "edu.mit.simile.babel.bibtex.BibtexReader");
         s_readersFromMimeType.put("application/json+exhibit", "edu.mit.simile.babel.exhibit.ExhibitJsonReader");
         s_readersFromMimeType.put("text/html+exhibit", "edu.mit.simile.babel.exhibit.ExhibitWebPageReader");
-        s_readersFromMimeType.put("image/jpeg", "edu.mit.simile.babel.jpeg.JPEGReader");
         
         s_writers.put("rdf-xml", "edu.mit.simile.babel.generic.RdfXmlConverter");
         s_writers.put("n3", "edu.mit.simile.babel.generic.N3Converter");
