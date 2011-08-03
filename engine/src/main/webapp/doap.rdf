@@ -3,25 +3,24 @@
     xmlns="http://usefulinc.com/ns/doap#">
     <Project>
     <name xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Babel</name>
-    <homepage rdf:resource="http://simile.mit.edu/babel/" />
+    <homepage rdf:resource="https://github.com/zepheira/babel" />
     <created>2006-12-06</created>
     <shortdesc xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Babel is a web service for converting between various data formats.</shortdesc>
     <description xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Babel is a web service for converting between various data formats.</description>
 
-    <mailing-list rdf:resource="http://simile.mit.edu/mail.html" />
+    <mailing-list rdf:resource="https://groups.google.com/group/simile-widgets/" />
 
     <maintainer>
         <foaf:Person>
-            <foaf:name xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">David Huynh</foaf:name>
-            <foaf:homepage rdf:resource="http://people.csail.mit.edu/dfhuynh/" />
-            <foaf:mbox rdf:resource="mailto:dfhuynh@mit.edu" />
+            <foaf:name xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ryan Lee</foaf:name>
+            <foaf:mbox rdf:resource="mailto:ryanlee@zepheira.com" />
         </foaf:Person>
     </maintainer>
 
     <!-- currently supported versions -->
     <release>
         <Version>
-            <created>2006-12-06</created>
+            <created>2011-08-03</created>
             <revision>1.0</revision>
         </Version>
     </release>
@@ -29,14 +28,14 @@
     <license rdf:resource="http://usefulinc.com/doap/licenses/bsd" />
 
     <repository>
-        <SVNRepository>
-            <location rdf:resource="http://simile.mit.edu/repository/babel/" />
-            <browse rdf:resource="http://simile.mit.edu/viewsvn/babel/" />
-        </SVNRepository>
+        <GitRepository>
+            <location rdf:resource="git://github.com/zepheira/babel.git" />
+            <browse rdf:resource="https://github.com/zepheira/babel" />
+        </GitRepository>
     </repository>
 
-    <wiki rdf:resource="http://simile.mit.edu/wiki/" />
-    <bug-database rdf:resource="http://simile.mit.edu/issues/" />
+    <wiki rdf:resource="https://github.com/zepheira/babel/wiki" />
+    <bug-database rdf:resource="https://github.com/zepheira/babel/issues" />
     <programming-language xml:lang="en-US" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Java</programming-language>
 </Project>
 </rdf:RDF>
