@@ -14,13 +14,26 @@
 
   <name>SIMILE Babel</name>
   <description>Babel is a web interface for converting between a variety of data formats.</description> 
-  <url></url>
+  <url>https://github.com/zepheira/babel</url>
   <inceptionYear>2006</inceptionYear>
 
   <organization>
     <name>MIT SIMILE Project</name>
     <url>http://simile.mit.edu/</url>
   </organization>
+
+  <developers>
+    <developer>
+      <id>dfhuynh</id>
+      <name>David Huynh</name>
+      <email>dfhuynh@gmail.com</email>
+    </developer>
+    <developer>
+      <id>ryanlee</id>
+      <name>Ryan Lee</name>
+      <email>ryanlee@zepheira.com</email>
+    </developer>
+  </developers>
   
   <licenses>
     <license>
@@ -29,6 +42,12 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
   
   <modules>
     <module>interfaces</module>
@@ -40,18 +59,11 @@
     <system>GitHub</system>
     <url>https://github.com/zepheira/babel/issues</url>
   </issueManagement>
-<!--
-  <distributionManagement>
-    <repository>
-      <id></id>
-      <url></url>
-    </repository>
-  </distributionManagement>
--->
+
   <scm>
-    <connection>scm:git:git://github.com/zepheira/babel.git</connection>
+    <connection>scm:git:git@github.com:zepheira/babel.git</connection>
     <developerConnection>scm:git:git@github.com:zepheira/babel.git</developerConnection>
-    <url>https://github.com/zepheira/babel</url>
+    <url>git@github.com:zepheira/babel.git</url>
   </scm>
 
   <build>
@@ -89,38 +101,68 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+          </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.mave.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   
-	<repositories>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>aduna-repo</id>
-			<name>Aduna Repository</name>
-			<url>http://repo.aduna-software.org/maven2/releases</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>aduna-snapshot-repo</id>
-			<name>Aduna Snapshot Repository</name>
-			<url>http://repo.aduna-software.org/maven2/snapshots</url>
-		</repository>
-	</repositories>
+  <repositories>
+    <repository>
+	  <releases>
+		<enabled>true</enabled>
+		<updatePolicy>always</updatePolicy>
+		<checksumPolicy>warn</checksumPolicy>
+	  </releases>
+	  <snapshots>
+		<enabled>false</enabled>
+		<updatePolicy>never</updatePolicy>
+		<checksumPolicy>fail</checksumPolicy>
+	  </snapshots>
+	  <id>aduna-repo</id>
+	  <name>Aduna Repository</name>
+	  <url>http://repo.aduna-software.org/maven2/releases</url>
+	</repository>
+	<repository>
+	  <releases>
+		<enabled>false</enabled>
+		<updatePolicy>never</updatePolicy>
+		<checksumPolicy>fail</checksumPolicy>
+	  </releases>
+	  <snapshots>
+		<enabled>true</enabled>
+		<updatePolicy>daily</updatePolicy>
+		<checksumPolicy>warn</checksumPolicy>
+	  </snapshots>
+	  <id>aduna-snapshot-repo</id>
+	  <name>Aduna Snapshot Repository</name>
+	  <url>http://repo.aduna-software.org/maven2/snapshots</url>
+	</repository>
+  </repositories>
 
 </project>
