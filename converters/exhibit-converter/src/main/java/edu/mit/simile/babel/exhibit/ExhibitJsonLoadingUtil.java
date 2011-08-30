@@ -49,6 +49,7 @@ public class ExhibitJsonLoadingUtil {
         
         try {
             Context context = Context.enter();
+            context.setOptimizationLevel(-1);
             Scriptable scope = context.initStandardObjects();
             
             Object o = context.evaluateReader(scope, reader, url, 1, null);
