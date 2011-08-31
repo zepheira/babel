@@ -8,12 +8,12 @@
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel-engine</artifactId>
   <name>SIMILE Babel Engine</name>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
 
   <parent>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel</artifactId>
-      <version>1.0</version>
+      <version>1.0-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -58,27 +58,27 @@
     <dependency>
         <groupId>edu.mit.simile</groupId>
         <artifactId>babel-interfaces</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>edu.mit.simile</groupId>
         <artifactId>babel-bibtex-converter</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>edu.mit.simile</groupId>
         <artifactId>babel-exhibit-converter</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>edu.mit.simile</groupId>
         <artifactId>babel-tsv-converter</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>edu.mit.simile</groupId>
         <artifactId>babel-xls-converter</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
 
     

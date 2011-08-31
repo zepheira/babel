@@ -7,13 +7,13 @@
   <groupId>edu.mit.simile</groupId>
   <artifactId>babel-interfaces</artifactId>
   <name>SIMILE Babel Interfaces</name>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <description>Interfaces of Babel</description> 
 
   <parent>
       <groupId>edu.mit.simile</groupId>
       <artifactId>babel</artifactId>
-      <version>1.0</version>
+      <version>1.0-SNAPSHOT</version>
   </parent>
 
   <dependencies>
