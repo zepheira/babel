@@ -6,7 +6,7 @@
   <name>SIMILE Exhibit Converter</name>
   <version>1.0-SNAPSHOT</version>
   <description>Exhibit Converter is part of the Babel project. It reads and writes data in exhibit formats.</description>
-  <url></url>
+  <url>http://github.com/zepheira/babel/</url>
 
   <parent>
       <groupId>edu.mit.simile</groupId>
