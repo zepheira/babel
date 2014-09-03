@@ -414,10 +414,10 @@ public class ExhibitJsonWriter implements BabelWriter {
 			o.put(name, value);
 		} else if (values instanceof Collection) {
 			try {
-				((Collection) values).add(value);
+				((Collection<Object>) values).add(value);
 			} catch (ClassCastException e) {
 				// go back to generic objects if there's a casting issue
-				List<Object> l = new ArrayList<Object>((Collection) values);
+				List<Object> l = new ArrayList<Object>((Collection<?>) values);
 				l.add(value);
 				o.put(name, l);
 			}

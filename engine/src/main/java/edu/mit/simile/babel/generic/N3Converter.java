@@ -80,6 +80,7 @@ public class N3Converter implements BabelReader, BabelWriter {
 		SailConnection connection = sail.getConnection();
 		try {
 			TurtleParser parser = new TurtleParser();
+			connection.begin();
 			parser.setRDFHandler(new RDFHandler() {
 				SailConnection m_connection;
 				

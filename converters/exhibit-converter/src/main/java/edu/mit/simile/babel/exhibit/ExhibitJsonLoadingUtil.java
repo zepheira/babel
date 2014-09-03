@@ -26,7 +26,6 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.OWL;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
@@ -118,6 +117,7 @@ public class ExhibitJsonLoadingUtil {
         
         SailConnection metaConnection = metaSail.getConnection();
         try {
+        	metaConnection.begin();
             for (String typeID : types.keySet()) {
                 Resource typeResource = _processType(typeID, types.get(typeID), baseURL, metaConnection);
                 if (origin != null) {
@@ -160,6 +160,7 @@ public class ExhibitJsonLoadingUtil {
             
             SailConnection dataConnection = dataSail.getConnection();
             try {
+            	dataConnection.begin();
                 for (NativeObject itemNO : items) {
                     Resource itemResource = _processItem(itemNO, baseURL, dataConnection, metaConnection, itemIDToURI);
                     if (origin != null) {
@@ -353,6 +354,7 @@ public class ExhibitJsonLoadingUtil {
             String uri = baseURL + _encode(typeID);
             
             resource = new URIImpl(uri);
+            sailConnection.begin();
             sailConnection.addStatement(resource, RDF.TYPE, OWL.CLASS);
             sailConnection.addStatement(resource, ExhibitOntology.ID, new LiteralImpl(typeID));
             sailConnection.addStatement(resource, RDFS.LABEL, new LiteralImpl(label));
@@ -369,6 +371,7 @@ public class ExhibitJsonLoadingUtil {
             String uri = baseURL + _encode(propertyID);
             
             predicate = new URIImpl(uri);
+            sailConnection.begin();
             sailConnection.addStatement(predicate, RDF.TYPE, OWL.CLASS);
             sailConnection.addStatement(predicate, ExhibitOntology.ID, new LiteralImpl(propertyID));
             sailConnection.addStatement(predicate, RDFS.LABEL, new LiteralImpl(label));

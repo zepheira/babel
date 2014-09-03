@@ -113,6 +113,7 @@ public class JPEGReader implements BabelReader {
 		
 		SailConnection c = sail.getConnection();
 		try {
+			c.begin();
 			c.addStatement(item, RDF.TYPE, new URIImpl(ExtractedMetadata.TYPE));
 			c.addStatement(item, RDFS.LABEL, new LiteralImpl(url));
 			c.addStatement(item, ExhibitOntology.ID, new LiteralImpl(url));

@@ -231,6 +231,7 @@ public class TSVReader implements BabelReader {
 				
 			SailConnection c = sail.getConnection();
 			try {
+				c.begin();
 				for (Item item : idToItem.values()) {
         			c.addStatement(item.m_uri, RDF.TYPE, item.m_type);
         			c.addStatement(item.m_uri, RDFS.LABEL, new LiteralImpl(item.m_label));

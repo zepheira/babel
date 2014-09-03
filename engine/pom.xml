@@ -5,10 +5,8 @@
 >
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.mit.simile</groupId>
   <artifactId>babel-engine</artifactId>
   <name>SIMILE Babel Engine</name>
-  <version>1.0-SNAPSHOT</version>
 
   <parent>
       <groupId>edu.mit.simile</groupId>

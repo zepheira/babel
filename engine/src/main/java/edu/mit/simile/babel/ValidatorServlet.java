@@ -65,7 +65,7 @@ public class ValidatorServlet extends HttpServlet {
 			m_ve.init(velocityProperties);
 
             ResourceBundle velocityConstantsBundle = ResourceBundle.getBundle("velocity");
-            Enumeration constantKeys = velocityConstantsBundle.getKeys();
+            Enumeration<String> constantKeys = velocityConstantsBundle.getKeys();
             while (constantKeys.hasMoreElements()) {
                 String key = (String) constantKeys.nextElement();
                 String value = velocityConstantsBundle.getString(key);
@@ -164,7 +164,7 @@ public class ValidatorServlet extends HttpServlet {
                 VelocityContext vcContext = new VelocityContext();
    	            vcContext.put("hasCode", new Boolean(false));
 
-                Enumeration velocityConstantKeys = velocityConstants.propertyNames();
+                Enumeration<?> velocityConstantKeys = velocityConstants.propertyNames();
                 while (velocityConstantKeys.hasMoreElements()) {
                     String key = (String) velocityConstantKeys.nextElement();
                     String value = velocityConstants.getProperty(key);

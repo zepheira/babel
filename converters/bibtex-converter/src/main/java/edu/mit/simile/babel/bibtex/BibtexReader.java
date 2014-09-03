@@ -120,6 +120,7 @@ public final class BibtexReader implements BabelReader {
 		 */
 		SailConnection c = sail.getConnection();
 		try {
+			c.begin();
 			c.setNamespace("bibtex", s_namespace);
 			c.commit();
 		} catch (SailException e) {
@@ -132,6 +133,7 @@ public final class BibtexReader implements BabelReader {
 		 * Assert as RDF
 		 */
 		try {
+			c.begin();
 			URI publicationType = new URIImpl(s_namespace + "Publication");
 			URI authorType = new URIImpl(s_namespace + "Author");
 			URI keyPredicate = new URIImpl(s_namespace + "key");
@@ -169,7 +171,7 @@ public final class BibtexReader implements BabelReader {
                  * Assert the remaining properties of the record
                  */
 				try {
-					Iterator predicates = rec.keySet().iterator();			
+					Iterator<?> predicates = rec.keySet().iterator();			
 					while (predicates.hasNext()) {
 						String p = (String) predicates.next();
 						String v = (String) rec.get(p);
@@ -318,7 +320,7 @@ public final class BibtexReader implements BabelReader {
 						s_logger.warn("Ambiguous crossref " + crosskey + " in " + key);
 					}
 					
-					Map ref = (Map) keymap.get(crosskey);
+					Map<?, ?> ref = (Map<?, ?>) keymap.get(crosskey);
 					if (ref.containsKey("crossref")) {
 						s_logger.warn("Ignoring nested crossref in " + crosskey + 
 								" while resolving crossrefs for " + key);

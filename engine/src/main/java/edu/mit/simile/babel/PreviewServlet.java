@@ -46,7 +46,7 @@ public class PreviewServlet extends TranslatorServlet {
 			m_ve.init(velocityProperties);
 
             ResourceBundle velocityConstantsBundle = ResourceBundle.getBundle("velocity");
-            Enumeration constantKeys = velocityConstantsBundle.getKeys();
+            Enumeration<String> constantKeys = velocityConstantsBundle.getKeys();
             while (constantKeys.hasMoreElements()) {
                 String key = (String) constantKeys.nextElement();
                 String value = velocityConstantsBundle.getString(key);
@@ -86,7 +86,7 @@ public class PreviewServlet extends TranslatorServlet {
 	            vcContext.put("data", writer.toString());
 	            vcContext.put("utilities", new PreviewUtilities());
 		            
-                Enumeration velocityConstantKeys = velocityConstants.propertyNames();
+                Enumeration<?> velocityConstantKeys = velocityConstants.propertyNames();
                 while (velocityConstantKeys.hasMoreElements()) {
                     String key = (String) velocityConstantKeys.nextElement();
                     String value = velocityConstants.getProperty(key);

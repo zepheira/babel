@@ -43,7 +43,7 @@ import edu.mit.simile.babel.util.Util;
  * @author dfhuynh
  */
 
-final public class BibMap extends HashMap {
+final public class BibMap extends HashMap<Object, Object> {
 
     private static final long serialVersionUID = -6088386205750299855L;
 	
@@ -86,8 +86,8 @@ final public class BibMap extends HashMap {
 		sb.append(hashdelim);
 
 		// Concatenate the fields, in alphabetical order, terminated by null
-		List keys = new ArrayList(size());
-		for(Iterator keyset = keySet().iterator(); keyset.hasNext(); ){
+		List<String> keys = new ArrayList<String>(size());
+		for(Iterator<?> keyset = keySet().iterator(); keyset.hasNext(); ){
 			String key = (String) keyset.next();
 			if(!key.equals("crossref"))	
 				keys.add(key);
@@ -111,7 +111,7 @@ final public class BibMap extends HashMap {
 	 * brackets indiscriminately. 
 	 */
 	public void normalizeStrings(){
-		Iterator keyset = keySet().iterator();
+		Iterator<?> keyset = keySet().iterator();
 		while(keyset.hasNext()){
 			Object key = keyset.next();
 			String value = (String) get(key);

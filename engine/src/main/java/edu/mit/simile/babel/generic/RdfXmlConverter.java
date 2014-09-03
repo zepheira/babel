@@ -80,6 +80,7 @@ public class RdfXmlConverter implements BabelReader, BabelWriter {
 		SailConnection connection = sail.getConnection();
 		try {
 			RDFXMLParser parser = new RDFXMLParser();
+			connection.begin();
 			parser.setRDFHandler(new RDFHandler() {
 				SailConnection m_connection;
 				

@@ -18,14 +18,13 @@ import org.apache.commons.lang.StringUtils;
 public class JSObject extends Properties {
     private static final long serialVersionUID = 5864375136126385719L;
 
-    @SuppressWarnings("unchecked")
 	static public void writeJSObject(IndentWriter writer, JSObject jso) throws IOException {
         writer.println("{");
         writer.indent();
         {
         	int fieldWidth = 0;
         	
-            Enumeration e = jso.propertyNames();
+            Enumeration<?> e = jso.propertyNames();
             while (e.hasMoreElements()) {
                 String name = (String) e.nextElement();
                 fieldWidth = Math.max(fieldWidth, name.length());
@@ -54,7 +53,6 @@ public class JSObject extends Properties {
         writer.print("}");
     }
     
-    @SuppressWarnings("unchecked")
 	static public void writeObject(IndentWriter writer, Object o) throws IOException {
         if (o instanceof Boolean) {
         	writer.print(((Boolean) o).booleanValue() ? "true" : "false");
@@ -62,7 +60,7 @@ public class JSObject extends Properties {
         	writer.println("[");
         	writer.indent();
             {
-                Iterator i = ((Collection) o).iterator();
+                Iterator<?> i = ((Collection<?>) o).iterator();
                 while (i.hasNext()) {
                     writeObject(writer, i.next());
                     if (i.hasNext()) {
